@@ -21,12 +21,21 @@ class LocationSerializer(serializers.ModelSerializer):
 
 
 class BusTripSerializer(serializers.ModelSerializer):
+    origin = LocationSerializer(read_only=True)
+    destination = LocationSerializer(read_only=True)
+
     class Meta:
         model = BusTrip
         fields = ('id', 'origin', 'destination', 'departure_date', 'arrival_date')
 
 
 class TaxiTripSerializer(serializers.ModelSerializer):
+    origin = LocationSerializer(read_only=True)
+    destination = LocationSerializer(read_only=True)
+    bus_trip = BusTripSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
+    taxi = TaxiSerializer(read_only=True)
+
     class Meta:
         model = TaxiTrip
         fields = ('id', 'origin', 'destination', 'date', 'bus_trip', 'user', 'taxi')

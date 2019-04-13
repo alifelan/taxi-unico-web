@@ -8,6 +8,8 @@ verify_ssl = true
 [packages]
 django = "*"
 django-rest-framework = "*"
+django-heroku = "*"
+psycopg2 = "*"
 
 [requires]
 python_version = "3.7"

@@ -120,13 +120,14 @@ def create_taxi_trip(request):
                 return JsonResponse({'status': 'false', 'message': 'User does not exist'}, status=404)
         except KeyError:
             user = None
-        # TODO: taxis agarrado de la base segun el tiempo en el que esten libres
-        # aka checar que no esten en un viaje a la hora de inicio de este viaje
-        taxi_id = body['taxiId']
-        try:
-            taxi = Taxi.objects.get(id=taxi_id)
-        except ObjectDoesNotExist:
-            return JsonResponse({'status': 'false', 'message': 'Taxi does not exist'}, status=404)
+        trips = TaxiTrip.objects.filter(date=date)
+        busy_taxis = {trip.taxi for trip in trips}
+        free_taxis = set(Taxi.objects.all()) - busy_taxis
+        taxi: Taxi
+        if len(free_taxis) > 0:
+            taxi = list(free_taxis)[0]
+        else:
+            return JsonResponse({'status': 'false', 'message': 'All taxis are busy at that time'}, status=403)
         taxi_trip = TaxiTrip(origin=origin, destination=destination, date=date,
                              bus_trip=bus_trip, user=user, taxi=taxi)
         taxi_trip.save()

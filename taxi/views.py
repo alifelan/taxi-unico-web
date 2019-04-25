@@ -14,10 +14,6 @@ import json
 
 @csrf_exempt
 def user(request):
-    """
-    List all code snippets, or create a new snippet.
-    """
-    # TODO: Create user code
     if request.method == 'POST':
         body = json.loads(request.body.decode("utf-8"))
         name = body['name']
@@ -25,17 +21,26 @@ def user(request):
         password = body['password']
         if len(User.objects.filter(email=email)) > 0:
             return JsonResponse({'status': 'false', 'message': 'User already exists. Use put to update'}, status=200)
-        user = User(name=name, email=email, password=password)
+        card = body['card']
+        user = User(name=name, email=email, password=password, card=card)
         user.save()
         serializer = UserSerializer(user)
         return JsonResponse(serializer.data, safe=False)
     elif request.method == 'PUT':
         body = json.loads(request.body.decode("utf-8"))
-        # TODO: fix put
-        name = body['name']
-        email = body['email']
-        password = body['password']
-        user = User(name=name, email=email, password=password)
+        user_email = body['email']
+        try:
+            user = User.objects.get(email=user_email)
+        except ObjectDoesNotExist:
+            return JsonResponse({'status': 'false', 'message': 'User does not exist'}, status=404)
+        name = user.name
+        password = user.password
+        for key in body.keys():
+            if key == 'name':
+                name = body[key]
+            elif key == 'password':
+                password = body[key]
+        user = User(name=name, email=user_email, password=password)
         user.save()
         serializer = UserSerializer(user)
         return JsonResponse(serializer.data, safe=False)
@@ -106,11 +111,14 @@ def create_taxi_trip(request):
             bus_trip = BusTrip.objects.get(id=bus_trip_id)
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'false', 'message': 'Bus trip does not exist'}, status=404)
+        # TODO: Este pedo puede ser nulo
         user_email = body['userEmail']
         try:
             user = User.objects.get(email=user_email)
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'false', 'message': 'User does not exist'}, status=404)
+        # TODO: taxis agarrado de la base segun el tiempo en el que esten libres
+        # aka checar que no esten en un viaje a la hora de inicio de este viaje
         taxi_id = body['taxiId']
         try:
             taxi = Taxi.objects.get(id=taxi_id)

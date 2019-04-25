@@ -20,7 +20,6 @@ class Taxi(models.Model):
     model = models.CharField(max_length=50)
     brand = models.CharField(max_length=50)
     taxi_number = models.IntegerField()
-    busy = models.BooleanField()
 
     def __str__(self):
         return str(self.taxi_number)

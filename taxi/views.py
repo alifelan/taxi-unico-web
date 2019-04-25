@@ -41,6 +41,20 @@ def user(request):
         return JsonResponse(serializer.data, safe=False)
 
 
+def login(request):
+    if request.method == 'GET':
+        body = json.loads(request.body.decode("utf-8"))
+        user_email = body['email']
+        try:
+            user = User.objects.get(email=user_email)
+        except ObjectDoesNotExist:
+            return JsonResponse({'status': 'false', 'message': 'User does not exist'}, status=404)
+        user_password = body['password']
+        if user.password == user_password:
+            return JsonResponse({'status': 'true', 'message': 'Success on loging in'}, status=200)
+        return JsonResponse({'status': 'false', 'message': 'Wrong password'}, status=403)
+
+
 def get_user_taxi_trips(request):
     """
     List all code snippets, or create a new snippet.
@@ -84,8 +98,9 @@ def create_taxi_trip(request):
             destination = Location(name=destination_name, state=destination_state,
                                    city=destination_city, address=destination_address)
             destination.save()
-        # TODO: add dates
         date = datetime.now()
+        if 'date' in body:
+            date = datetime.strptime(body['date'], '%m/%d/%y %H:%M')
         bus_trip_id = body['busTripId']
         try:
             bus_trip = BusTrip.objects.get(id=bus_trip_id)
@@ -134,8 +149,9 @@ def bus_trip(request):
             destination = Location(name=destination_name, state=destination_state,
                                    city=destination_city, address=destination_address)
             destination.save()
-        # TODO: add dates
         date = datetime.now()
+        if 'date' in body:
+            date = datetime.strptime(body['date'], '%m/%d/%y %H:%M')
         bus_trip = BusTrip(origin=origin, destination=destination,
                            departure_date=date, arrival_date=date)
         serializer = BusTripSerializer(bus_trip)

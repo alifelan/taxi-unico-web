@@ -9,4 +9,5 @@ urlpatterns = [
     path('createTaxiTrip/', views.create_taxi_trip, name='create_taxi_trip'),
     path('busTrip/', views.bus_trip, name='bus_trip'),
     path('randomBusTrip/', views.get_random_bus_trip, name='get_random_bus_trip'),
+    path('login/', views.login, name='login'),
 ]

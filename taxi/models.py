@@ -7,7 +7,7 @@ class User(models.Model):
     name = models.CharField(max_length=50)
     email = models.CharField(max_length=50, primary_key=True)
     password = models.CharField(max_length=50)
-    # TODO: tarjeta
+    card = models.CharField(max_length=16)
 
     def __str__(self):
         return self.name
@@ -21,7 +21,6 @@ class Taxi(models.Model):
     brand = models.CharField(max_length=50)
     taxi_number = models.IntegerField()
     busy = models.BooleanField()
-    # TODO: ubicacion
 
     def __str__(self):
         return str(self.taxi_number)

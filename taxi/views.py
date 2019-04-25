@@ -111,12 +111,15 @@ def create_taxi_trip(request):
             bus_trip = BusTrip.objects.get(id=bus_trip_id)
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'false', 'message': 'Bus trip does not exist'}, status=404)
-        # TODO: Este pedo puede ser nulo
-        user_email = body['userEmail']
+        user: User
         try:
-            user = User.objects.get(email=user_email)
-        except ObjectDoesNotExist:
-            return JsonResponse({'status': 'false', 'message': 'User does not exist'}, status=404)
+            user_email = body['userEmail']
+            try:
+                user = User.objects.get(email=user_email)
+            except ObjectDoesNotExist:
+                return JsonResponse({'status': 'false', 'message': 'User does not exist'}, status=404)
+        except KeyError:
+            user = None
         # TODO: taxis agarrado de la base segun el tiempo en el que esten libres
         # aka checar que no esten en un viaje a la hora de inicio de este viaje
         taxi_id = body['taxiId']

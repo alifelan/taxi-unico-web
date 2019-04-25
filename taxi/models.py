@@ -55,7 +55,8 @@ class TaxiTrip(models.Model):
         to=Location, related_name='taxiTripsD', on_delete=models.PROTECT)
     date = models.DateTimeField()
     bus_trip = models.ForeignKey(to=BusTrip, related_name='taxiTrips', on_delete=models.PROTECT)
-    user = models.ForeignKey(to=User, related_name='taxiTrips', on_delete=models.PROTECT)
+    user = models.ForeignKey(to=User, related_name='taxiTrips',
+                             on_delete=models.PROTECT, null=True, blank=True)
     taxi = models.ForeignKey(to=Taxi, related_name='trips', on_delete=models.PROTECT)
 
     def __str__(self):

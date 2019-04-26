@@ -16,8 +16,8 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
         Status:
             400: Missing data in json
             405: User exists, use PUT to update data
-        Returns:
-            User: {
+        Returns: User
+            {
                 name, email
             }
 
@@ -30,8 +30,8 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
         Status:
             400: Missing data in json
             404: User does not exist
-        Returns:
-            User: {
+        Returns: User
+            {
                 name, email
             }
 
@@ -45,8 +45,8 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
         400: Missing data in json
         404: User does not exist
         405: Wrong method
-    Returns:
-        [TaxiTrip: {
+    Returns: [TaxiTrip]
+        [{
             id, origin: {id, name, state, city, address}, destination: {id,
             name, state, city, address}, date, bus_trip: {id, origin: {id, name,
             state, city, address}, destination: {id, name, state, city,
@@ -77,8 +77,8 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
         404: User or bus trip does not exist
         403: All taxis are busy
         405: Wrong method
-    Returns:
-        TaxiTrip: {
+    Returns: TaxiTrip
+        {
             id, origin: {id, name, state, city, address}, destination: {id,
             name, state, city, address}, date, bus_trip: {id, origin: {id, name,
             state, city, address}, destination: {id, name, state, city,
@@ -110,8 +110,8 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
         404: User or bus trip does not exist
         403: All taxis are busy
         405: Wrong method
-    Returns:
-        BusTrip: {
+    Returns: BusTrip
+        {
             id, origin: {id, name, state, city, address}, destination: {id,
             name, state, city, address}, departure_date, arrival_date
         }
@@ -123,8 +123,8 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
     Status:
         400: Missing field
         404: Bus trip with id doesnt exist
-    Returns:
-        BusTrip: {
+    Returns: BusTrip
+        {
             id, origin: {id, name, state, city, address}, destination: {id,
             name, state, city, address}, departure_date, arrival_date
         }
@@ -138,8 +138,8 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
     Status:
         404: There are no bus trips
         405: Wrong method
-    Returns:
-        BusTrip: {
+    Returns: BusTrip
+        {
             id, origin: {id, name, state, city, address}, destination: {id,
             name, state, city, address}, departure_date, arrival_date
         }

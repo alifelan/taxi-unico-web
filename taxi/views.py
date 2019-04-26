@@ -26,8 +26,8 @@ def user(request):
         Status:
             400: Missing data in json
             405: User exists, use PUT to update data
-        Returns:
-            User: {
+        Returns: User
+            {
                 name, email
             }
 
@@ -40,8 +40,8 @@ def user(request):
         Status:
             400: Missing data in json
             404: User does not exist
-        Returns:
-            User: {
+        Returns: User
+            {
                 name, email
             }
     """
@@ -125,8 +125,8 @@ def get_user_taxi_trips(request):
         400: Missing data in json
         404: User does not exist
         405: Wrong method
-    Returns:
-        [TaxiTrip: {
+    Returns: [TaxiTrip]
+        [{
             id, origin: {id, name, state, city, address}, destination: {id,
             name, state, city, address}, date, bus_trip: {id, origin: {id, name,
             state, city, address}, destination: {id, name, state, city,
@@ -174,8 +174,8 @@ def create_taxi_trip(request):
         404: User or bus trip does not exist
         403: All taxis are busy
         405: Wrong method
-    Returns:
-        TaxiTrip: {
+    Returns: TaxiTrip
+        {
             id, origin: {id, name, state, city, address}, destination: {id,
             name, state, city, address}, date, bus_trip: {id, origin: {id, name,
             state, city, address}, destination: {id, name, state, city,
@@ -269,8 +269,8 @@ def bus_trip(request):
         404: User or bus trip does not exist
         403: All taxis are busy
         405: Wrong method
-    Returns:
-        BusTrip: {
+    Returns: BusTrip
+        {
             id, origin: {id, name, state, city, address}, destination: {id,
             name, state, city, address}, departure_date, arrival_date
         }
@@ -282,8 +282,8 @@ def bus_trip(request):
     Status:
         400: Missing field
         404: Bus trip with id doesnt exist
-    Returns:
-        BusTrip: {
+    Returns: BusTrip
+        {
             id, origin: {id, name, state, city, address}, destination: {id,
             name, state, city, address}, departure_date, arrival_date
         }
@@ -348,8 +348,8 @@ def get_random_bus_trip(request):
     Status:
         404: There are no bus trips
         405: Wrong method
-    Returns:
-        BusTrip: {
+    Returns: BusTrip
+        {
             id, origin: {id, name, state, city, address}, destination: {id,
             name, state, city, address}, departure_date, arrival_date
         }

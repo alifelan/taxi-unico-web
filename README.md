@@ -13,6 +13,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             name: User name
             email: User email
             password: User password
+            card: Credit card
         Status:
             400: Missing data in json
             405: User exists, use PUT to update data

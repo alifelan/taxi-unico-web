@@ -37,6 +37,7 @@ def user(request):
             email: User email
             name (optional): New name
             password (optional): New password
+            card: Credit card
         Status:
             400: Missing data in json
             404: User does not exist

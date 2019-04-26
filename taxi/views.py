@@ -144,7 +144,8 @@ def get_user_taxi_trips(request):
             return JsonResponse({'status': 'false', 'message': 'User does not exist'}, status=404)
         user_taxi_trips = user.taxiTrips.all()
         serializer = TaxiTripSerializer(user_taxi_trips, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        response = {"data": serializer.data}
+        return JsonResponse(response, safe=False)
     return JsonResponse({'status': 'false', 'message': 'Only GET'}, status=405)
 
 
@@ -350,7 +351,6 @@ def get_random_bus_trip(request):
             id, origin: {id, name, state, city, address}, destination: {id,
             name, state, city, address}, departure_date, arrival_date
         }
-
     """
     if request.method == 'GET':
         bus_trip_id = randint(1, len(BusTrip.objects.all()))

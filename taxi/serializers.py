@@ -5,7 +5,7 @@ from taxi.models import Taxi, User, TaxiTrip, BusTrip, Location
 class TaxiSerializer(serializers.ModelSerializer):
     class Meta:
         model = Taxi
-        fields = ('id', 'driver_name', 'plate', 'model', 'brand', 'taxi_number', 'busy')
+        fields = ('id', 'driver_name', 'plate', 'model', 'brand', 'taxi_number')
 
 
 class UserSerializer(serializers.ModelSerializer):

@@ -96,6 +96,8 @@ def login(request):
         200: Success
         403: Wrong password
         405: Wrong method
+    Returns:
+        {status, message}
     """
     if request.method == 'GET':
         body = json.loads(request.body.decode("utf-8"))

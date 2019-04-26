@@ -157,3 +157,5 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
         200: Success
         403: Wrong password
         405: Wrong method
+    Returns:
+        {status, message}

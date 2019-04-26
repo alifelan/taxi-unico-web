@@ -355,11 +355,10 @@ def get_random_bus_trip(request):
         }
     """
     if request.method == 'GET':
-        bus_trip_id = randint(1, len(BusTrip.objects.all()))
-        try:
-            bus_trip = BusTrip.objects.get(id=bus_trip_id)
-        except ObjectDoesNotExist:
+        if len(BusTrip.objects.all()) == 0:
             return JsonResponse({'status': 'false', 'message': 'There are no bus trips'}, status=404)
+        bus_trip_id = randint(1, len(BusTrip.objects.all()))
+        bus_trip = BusTrip.objects.get(id=bus_trip_id)
         serializer = BusTripSerializer(bus_trip)
         return JsonResponse(serializer.data, safe=False)
     return JsonResponse({'status': 'false', 'message': 'Only GET'}, status=405)

@@ -100,7 +100,7 @@ def login(request):
     Returns:
         {status, message}
     """
-    if request.method == 'GET':
+    if request.method == 'POST':
         body = json.loads(request.body.decode("utf-8"))
         try:
             user_email = body['email']
@@ -114,7 +114,7 @@ def login(request):
         if user.password == user_password:
             return JsonResponse({'status': 'true', 'message': 'Success on loging in'}, status=200)
         return JsonResponse({'status': 'false', 'message': 'Wrong password'}, status=403)
-    return JsonResponse({'status': 'false', 'message': 'Only GET'}, status=405)
+    return JsonResponse({'status': 'false', 'message': 'Only POST'}, status=405)
 
 
 def get_user_taxi_trips(request):

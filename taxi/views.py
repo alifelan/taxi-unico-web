@@ -85,6 +85,7 @@ def user(request):
     return JsonResponse({'status': 'false', 'message': 'Only POST and PUT'}, status=405)
 
 
+@csrf_exempt
 def login(request):
     """
     Login checks email and password received

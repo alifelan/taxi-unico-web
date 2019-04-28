@@ -38,10 +38,10 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
 
 
 
-## https://taxi-unico-api.herokuapp.com/userTaxiTrips/
+## https://taxi-unico-api.herokuapp.com/userTaxiTrips/<email>
     Returns taxi trips of a user
     Param:
-        email: user email
+        None
     Status:
         400: Missing data in json
         404: User does not exist
@@ -117,6 +117,8 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             name, state, city, address}, departure_date, arrival_date
         }
 
+
+## https://taxi-unico-api.herokuapp.com/busTrip/<id>
     GET:
     Gets bus trip
     Param:

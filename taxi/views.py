@@ -118,7 +118,7 @@ def login(request):
     return JsonResponse({'status': 'false', 'message': 'Only POST'}, status=405)
 
 
-def get_user_taxi_trips(request):
+def get_user_taxi_trips(request, email):
     """
     Returns taxi trips of a user
     Param:
@@ -137,13 +137,9 @@ def get_user_taxi_trips(request):
         }]
     """
     if request.method == 'GET':
-        body = json.loads(request.body.decode("utf-8"))
+        print(email)
         try:
-            user_email = body['email']
-        except KeyError:
-            return JsonResponse({'status': 'false', 'message': 'Missing data'}, status=400)
-        try:
-            user = User.objects.get(email=user_email)
+            user = User.objects.get(email=email)
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'false', 'message': 'User does not exist'}, status=404)
         user_taxi_trips = user.taxiTrips.all()
@@ -188,7 +184,7 @@ def create_taxi_trip(request):
     if request.method == 'POST':
         body = json.loads(request.body.decode("utf-8"))
         try:
-            origin_json = json['origin']
+            origin_json = body['origin']
             origin_name = origin_json['name']
             origin_state = origin_json['state']
             origin_city = origin_json['city']
@@ -247,11 +243,35 @@ def create_taxi_trip(request):
     return JsonResponse({'status': 'false', 'message': 'Only POST'}, status=405)
 
 
-@csrf_exempt
-def bus_trip(request):
+def get_bus_trip(request, id):
     """
-    Works with POST and GET
+    GET:
+    Gets bus trip
+    Param:
+        id: Bus trip id
+    Status:
+        400: Missing field
+        404: Bus trip with id doesnt exist
+    Returns: BusTrip
+        {
+            id, origin: {id, name, state, city, address}, destination: {id,
+            name, state, city, address}, departure_date, arrival_date
+        }
+    """
+    if request.method == 'GET':
+        try:
+            bus_trip = BusTrip.objects.get(id=id)
+        except ObjectDoesNotExist:
+            return JsonResponse({'status': 'false', 'message': 'Bus trip does not exist'}, status=404)
+        serializer = BusTripSerializer(bus_trip)
+        return JsonResponse(serializer.data, safe=False)
+    else:
+        return JsonResponse({'status': 'false', 'message': 'Only GET'}, status=405)
 
+
+@csrf_exempt
+def post_bus_trip(request):
+    """
     POST:
     Creates bus trip
     Param:
@@ -276,24 +296,11 @@ def bus_trip(request):
             id, origin: {id, name, state, city, address}, destination: {id,
             name, state, city, address}, departure_date, arrival_date
         }
-
-    GET:
-    Gets bus trip
-    Param:
-        id: Bus trip id
-    Status:
-        400: Missing field
-        404: Bus trip with id doesnt exist
-    Returns: BusTrip
-        {
-            id, origin: {id, name, state, city, address}, destination: {id,
-            name, state, city, address}, departure_date, arrival_date
-        }
     """
     if request.method == 'POST':
         try:
             body = json.loads(request.body.decode("utf-8"))
-            origin_json = json['origin']
+            origin_json = body['origin']
             origin_name = origin_json['name']
             origin_state = origin_json['state']
             origin_city = origin_json['city']
@@ -324,22 +331,11 @@ def bus_trip(request):
             destination.save()
         bus_trip = BusTrip(origin=origin, destination=destination,
                            departure_date=date, arrival_date=date)
-        serializer = BusTripSerializer(bus_trip)
-        return JsonResponse(serializer.data, safe=False)
-    elif request.method == 'GET':
-        body = json.loads(request.body.decode("utf-8"))
-        try:
-            bus_id = body['id']
-        except KeyError:
-            return JsonResponse({'status': 'false', 'message': 'Missing id'}, status=400)
-        try:
-            bus_trip = BusTrip.objects.get(id=bus_id)
-        except ObjectDoesNotExist:
-            return JsonResponse({'status': 'false', 'message': 'Bus trip does not exist'}, status=404)
+        bus_trip.save()
         serializer = BusTripSerializer(bus_trip)
         return JsonResponse(serializer.data, safe=False)
     else:
-        return JsonResponse({'status': 'false', 'message': 'Only POST and GET'}, status=405)
+        return JsonResponse({'status': 'false', 'message': 'Only POST'}, status=405)
 
 
 def get_random_bus_trip(request):

@@ -154,7 +154,8 @@ def get_user_taxi_trips(request, email):
 @csrf_exempt
 def create_taxi_trip(request):
     """
-    Creates a taxi trip with data received
+    Creates a taxi trip with data received. If it receives origin, it puts
+    bus trip destination as destination, and viceversa
     Param:
         origin (optional): Origin data
             name: Name

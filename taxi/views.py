@@ -73,12 +73,15 @@ def user(request):
             return JsonResponse({'status': 'false', 'message': 'User does not exist'}, status=404)
         name = user.name
         password = user.password
+        card = user.card
         for key in body.keys():
             if key == 'name':
                 name = body[key]
             elif key == 'password':
                 password = body[key]
-        user = User(name=name, email=user_email, password=password)
+            elif key == 'card':
+                card = body[key]
+        user = User(name=name, email=user_email, password=password, card=card)
         user.save()
         serializer = UserSerializer(user)
         return JsonResponse(serializer.data, safe=False)
@@ -137,7 +140,6 @@ def get_user_taxi_trips(request, email):
         }]
     """
     if request.method == 'GET':
-        print(email)
         try:
             user = User.objects.get(email=email)
         except ObjectDoesNotExist:

@@ -3,9 +3,11 @@ from taxi.models import Taxi, User, TaxiTrip, BusTrip, Location
 
 
 class TaxiSerializer(serializers.ModelSerializer):
+    city = serializers.StringRelatedField()
+
     class Meta:
         model = Taxi
-        fields = ('id', 'driver_name', 'plate', 'model', 'brand', 'taxi_number')
+        fields = ('id', 'driver_name', 'plate', 'model', 'brand', 'taxi_number', 'city')
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -15,9 +17,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class LocationSerializer(serializers.ModelSerializer):
+    city = serializers.StringRelatedField()
+
     class Meta:
         model = Location
-        fields = ('id', 'name', 'state', 'city', 'address')
+        fields = ('id', 'name', 'city', 'address')
 
 
 class BusTripSerializer(serializers.ModelSerializer):
@@ -38,4 +42,5 @@ class TaxiTripSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TaxiTrip
-        fields = ('id', 'origin', 'destination', 'date', 'bus_trip', 'user', 'taxi')
+        fields = ('id', 'origin', 'destination', 'departure_date',
+                  'arrival_date', 'bus_trip', 'user', 'taxi', 'price')

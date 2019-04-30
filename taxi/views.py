@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
-from taxi.models import Taxi, User, Location, BusTrip, TaxiTrip
+from taxi.models import Taxi, User, Location, BusTrip, TaxiTrip, State, City
 from taxi.serializers import TaxiSerializer, UserSerializer, LocationSerializer, BusTripSerializer, TaxiTripSerializer
 from datetime import datetime
 from random import randint
@@ -156,12 +156,12 @@ def create_taxi_trip(request):
     """
     Creates a taxi trip with data received
     Param:
-        origin: Origin data
+        origin (optional): Origin data
             name: Name
             state: State
             city: City
             address: Address
-        destionation: Destination data
+        destionation (optional): Destination data
             name: Name
             state: State
             city: City
@@ -169,6 +169,7 @@ def create_taxi_trip(request):
         date: Date and time of the trip, in format Month/Day/Year Hour:Minutes
         busTripId: Identifier of the bus trip
         userEmail (optional): user email
+        price: trip price
     Status:
         400: Missing data in json
         404: User or bus trip does not exist
@@ -180,65 +181,89 @@ def create_taxi_trip(request):
             name, state, city, address}, date, bus_trip: {id, origin: {id, name,
             state, city, address}, destination: {id, name, state, city,
             address}, departure_date, arrival_date}, user: {name, email},
-            taxi: {id, driver_name, plate, model, brand, taxi_number}
+            taxi: {id, driver_name, plate, model, brand, taxi_number, price}
         }
     """
     if request.method == 'POST':
         body = json.loads(request.body.decode("utf-8"))
         try:
-            origin_json = body['origin']
-            origin_name = origin_json['name']
-            origin_state = origin_json['state']
-            origin_city = origin_json['city']
-            origin_address = origin_json['address']
-            destination_json = body['destination']
-            destination_name = destination_json['name']
-            destination_state = destination_json['state']
-            destination_city = destination_json['city']
-            destination_address = destination_json['address']
+            price = body['price']
             date = datetime.now()
             if 'date' in body:
                 date = datetime.strptime(body['date'], '%m/%d/%y %H:%M')
             bus_trip_id = body['busTripId']
-            user: User
-            try:
-                user_email = body['userEmail']
-                try:
-                    user = User.objects.get(email=user_email)
-                except ObjectDoesNotExist:
-                    return JsonResponse({'status': 'false', 'message': 'User does not exist'}, status=404)
-            except KeyError:
-                user = None
         except KeyError:
             return JsonResponse({'status': 'false', 'message': 'Missing data'}, status=400)
         try:
-            origin = Location.objects.get(
-                name=origin_name, state=origin_state, city=origin_city, address=origin_address)
-        except ObjectDoesNotExist:
-            origin = Location(name=origin_name, state=origin_state,
-                              city=origin_city, address=origin_address)
-            origin.save()
-        try:
-            destination = Location.objects.get(
-                name=destination_name, state=destination_state, city=destination_city, address=destination_address)
-        except ObjectDoesNotExist:
-            destination = Location(name=destination_name, state=destination_state,
-                                   city=destination_city, address=destination_address)
-            destination.save()
+            user_email = body['email']
+            try:
+                user = User.objects.get(email=user_email)
+            except ObjectDoesNotExist:
+                return JsonResponse({'status': 'false', 'message': 'User does not exist'}, status=404)
+        except KeyError:
+            user = None
         try:
             bus_trip = BusTrip.objects.get(id=bus_trip_id)
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'false', 'message': 'Bus trip does not exist'}, status=404)
-        trips = TaxiTrip.objects.filter(date=date)
-        busy_taxis = {trip.taxi for trip in trips}
-        free_taxis = set(Taxi.objects.all()) - busy_taxis
-        taxi: Taxi
+        try:
+            origin_json = body['origin']
+            name = origin_json['name']
+            state = origin_json['state']
+            city = origin_json['city']
+            address = origin_json['address']
+            try:
+                origin_state = State.objects.get(state=state)
+            except ObjectDoesNotExist:
+                origin_state = State(state=state)
+                origin_state.save()
+            try:
+                origin_city = City.objects.get(state=origin_state, city=city)
+            except ObjectDoesNotExist:
+                origin_city = City(state=origin_state, city=city)
+                origin_city.save()
+            try:
+                origin = Location.objects.get(
+                    city=origin_city, name=name, address=address)
+            except ObjectDoesNotExist:
+                origin = Location(city=origin_city, address=address, name=name)
+                origin.save()
+            destination = bus_trip.destination
+        except KeyError:
+            try:
+                destination_json = body['destination']
+                name = destination_json['name']
+                state = destination_json['state']
+                city = destination_json['city']
+                address = destination_json['address']
+            except KeyError:
+                return JsonResponse({'status': 'false', 'message': 'Bus trip does not exist'}, status=404)
+            try:
+                destination_state = State.objects.get(state=state)
+            except ObjectDoesNotExist:
+                destination_state = State(state=state)
+                destination_state.save()
+            try:
+                destination_city = City.objects.get(state=destination_state, city=city)
+            except ObjectDoesNotExist:
+                destination_city = City(state=destination_state, city=city)
+                destination_city.save()
+            try:
+                destination = Location.objects.get(
+                    city=destination_city, name=name, address=address)
+            except ObjectDoesNotExist:
+                destination = Location(city=destination_city, address=address, name=name)
+                destination.save()
+            origin = bus_trip.destination
+        trips = TaxiTrip.objects.filter(arrival_date=date)
+        busy_local_taxis = {trip.taxi for trip in trips if trip.taxi.city == origin.city}
+        free_taxis = set(Taxi.objects.all()) - busy_local_taxis
         if len(free_taxis) > 0:
             taxi = list(free_taxis)[0]
         else:
             return JsonResponse({'status': 'false', 'message': 'All taxis are busy at that time'}, status=403)
-        taxi_trip = TaxiTrip(origin=origin, destination=destination, date=date,
-                             bus_trip=bus_trip, user=user, taxi=taxi)
+        taxi_trip = TaxiTrip(origin=origin, destination=destination, departure_date=date, arrival_date=None,
+                             bus_trip=bus_trip, user=user, taxi=taxi, price=price)
         taxi_trip.save()
         serializer = TaxiTripSerializer(taxi_trip)
         return JsonResponse(serializer.data, safe=False)
@@ -303,33 +328,51 @@ def post_bus_trip(request):
         try:
             body = json.loads(request.body.decode("utf-8"))
             origin_json = body['origin']
-            origin_name = origin_json['name']
-            origin_state = origin_json['state']
-            origin_city = origin_json['city']
-            origin_address = origin_json['address']
+            o_name = origin_json['name']
+            o_state = origin_json['state']
+            o_city = origin_json['city']
+            o_address = origin_json['address']
             destination_json = body['destination']
-            destination_name = destination_json['name']
-            destination_state = destination_json['state']
-            destination_city = destination_json['city']
-            destination_address = destination_json['address']
+            d_name = destination_json['name']
+            d_state = destination_json['state']
+            d_city = destination_json['city']
+            d_address = destination_json['address']
             date = datetime.now()
             if 'date' in body:
                 date = datetime.strptime(body['date'], '%m/%d/%y %H:%M')
         except KeyError:
             return JsonResponse({'status': 'false', 'message': 'Missing data'}, status=400)
         try:
-            origin = Location.objects.get(
-                name=origin_name, state=origin_state, city=origin_city, address=origin_address)
+            origin_state = State.objects.get(state=o_state)
         except ObjectDoesNotExist:
-            origin = Location(name=origin_name, state=origin_state,
-                              city=origin_city, address=origin_address)
+            origin_state = State(state=o_state)
+            origin_state.save()
+        try:
+            origin_city = City.objects.get(state=origin_state, city=o_city)
+        except ObjectDoesNotExist:
+            origin_city = City(state=origin_state, city=o_city)
+            origin_city.save()
+        try:
+            origin = Location.objects.get(
+                city=origin_city, name=o_name, address=o_address)
+        except ObjectDoesNotExist:
+            origin = Location(city=origin_city, address=o_address, name=o_name)
             origin.save()
         try:
-            destination = Location.objects.get(
-                name=destination_name, state=destination_state, city=destination_city, address=destination_address)
+            destination_state = State.objects.get(state=d_state)
         except ObjectDoesNotExist:
-            destination = Location(name=destination_name, state=destination_state,
-                                   city=destination_city, address=destination_address)
+            destination_state = State(state=d_state)
+            destination_state.save()
+        try:
+            destination_city = City.objects.get(state=destination_state, city=d_city)
+        except ObjectDoesNotExist:
+            destination_city = City(state=destination_state, city=d_city)
+            destination_city.save()
+        try:
+            destination = Location.objects.get(
+                city=destination_city, name=d_name, address=d_address)
+        except ObjectDoesNotExist:
+            destination = Location(city=destination_city, address=d_address, name=d_name)
             destination.save()
         bus_trip = BusTrip(origin=origin, destination=destination,
                            departure_date=date, arrival_date=date)

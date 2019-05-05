@@ -59,21 +59,20 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
 
 
 ## https://taxi-unico-api.herokuapp.com/createTaxiTrip/
-    Creates a taxi trip with data received. If it receives origin, it puts
-    bus trip destination as destination, and viceversa
+    Creates a taxi trip with data received. It receives a number to identify
+    the trip, so it can know from where to where its going.
     Param:
-        origin (optional): Origin data
-            name: Name
-            state: State
-            city: City
-            address: Address
-        destionation (optional): Destination data
+        Location:
             name: Name
             state: State
             city: City
             address: Address
         date: Date and time of the trip, in format Month/Day/Year Hour:Minutes
         busTripId: Identifier of the bus trip
+        trip: Number from 1 to 4, symbolizing if its a trip from origin to origin
+            station with 1, a trip from destination station to destination with 2,
+            from destination to destination station with 3 or from origin station
+            to origin with 4.
         userEmail (optional): user email
         price: trip price
     Status:
@@ -81,6 +80,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
         404: User or bus trip does not exist
         403: All taxis are busy
         405: Wrong method
+        412: Trip is not between 1 and 4 or bus trip is not a round trip
     Returns: TaxiTrip
         {
             id, origin: {id, name, state, city, address}, destination: {id,
@@ -110,6 +110,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             city: City
             address: Address
         date: Date and time of the trip, in format Month/Day/Year Hour:Minutes
+        roundTrip (optional): True if its a round trip
     Status:
         400: Missing data in json
         404: User or bus trip does not exist

@@ -247,7 +247,7 @@ def rate_driver(request):
 @csrf_exempt
 def rate_user(request):
     """
-    Adds rating to user in taxi trip
+    Adds rating to user in taxi trip and saves arrival date.
     Param:
         taxiTripId: Id of the taxi trip
         rating: Rating given to the user in a scale of 1 to 5
@@ -291,21 +291,20 @@ def rate_user(request):
 @csrf_exempt
 def create_taxi_trip(request):
     """
-    Creates a taxi trip with data received. If it receives origin, it puts
-    bus trip destination as destination, and viceversa
+    Creates a taxi trip with data received. It receives a number to identify
+    the trip, so it can know from where to where its going.
     Param:
-        origin (optional): Origin data
-            name: Name
-            state: State
-            city: City
-            address: Address
-        destionation (optional): Destination data
+        Location:
             name: Name
             state: State
             city: City
             address: Address
         date: Date and time of the trip, in format Month/Day/Year Hour:Minutes
         busTripId: Identifier of the bus trip
+        trip: Number from 1 to 4, symbolizing if its a trip from origin to origin
+            station with 1, a trip from destination station to destination with 2,
+            from destination to destination station with 3 or from origin station
+            to origin with 4.
         userEmail (optional): user email
         price: trip price
     Status:
@@ -313,6 +312,7 @@ def create_taxi_trip(request):
         404: User or bus trip does not exist
         403: All taxis are busy
         405: Wrong method
+        412: Trip is not between 1 and 4 or bus trip is not a round trip
     Returns: TaxiTrip
         {
             id, origin: {id, name, state, city, address}, destination: {id,
@@ -346,54 +346,30 @@ def create_taxi_trip(request):
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'false', 'message': 'Bus trip does not exist'}, status=404)
         try:
-            origin_json = body['origin']
-            name = origin_json['name']
-            state = origin_json['state']
-            city = origin_json['city']
-            address = origin_json['address']
+            location_json = body['location']
+            location_name = location_json['name']
+            location_state = location_json['state']
+            location_city = location_json['city']
+            location_address = location_json['address']
             try:
-                origin_state = State.objects.get(state=state)
+                state = State.objects.get(state=location_state)
             except ObjectDoesNotExist:
-                origin_state = State(state=state)
-                origin_state.save()
+                state = State(state=location_state)
+                location_state.save()
             try:
-                origin_city = City.objects.get(state=origin_state, city=city)
+                city = City.objects.get(state=state, city=location_city)
             except ObjectDoesNotExist:
-                origin_city = City(state=origin_state, city=city)
-                origin_city.save()
+                city = City(state=state, city=location_city)
+                city.save()
             try:
-                origin = Location.objects.get(
-                    city=origin_city, name=name, address=address)
+                location = Location.objects.get(
+                    city=city, name=location_name, address=location_address)
             except ObjectDoesNotExist:
-                origin = Location(city=origin_city, address=address, name=name)
-                origin.save()
-            destination = bus_trip.destination
+                location = Location(city=city, address=location_address, name=location_name)
+                location.save()
+            trip = body['trip']
         except KeyError:
-            try:
-                destination_json = body['destination']
-                name = destination_json['name']
-                state = destination_json['state']
-                city = destination_json['city']
-                address = destination_json['address']
-            except KeyError:
-                return JsonResponse({'status': 'false', 'message': 'Bus trip does not exist'}, status=404)
-            try:
-                destination_state = State.objects.get(state=state)
-            except ObjectDoesNotExist:
-                destination_state = State(state=state)
-                destination_state.save()
-            try:
-                destination_city = City.objects.get(state=destination_state, city=city)
-            except ObjectDoesNotExist:
-                destination_city = City(state=destination_state, city=city)
-                destination_city.save()
-            try:
-                destination = Location.objects.get(
-                    city=destination_city, name=name, address=address)
-            except ObjectDoesNotExist:
-                destination = Location(city=destination_city, address=address, name=name)
-                destination.save()
-            origin = bus_trip.destination
+            return JsonResponse({'status': 'false', 'message': 'Missing data'}, status=400)
         trips = TaxiTrip.objects.filter(arrival_date=date)
         busy_local_taxis = {trip.taxi for trip in trips if trip.taxi.city == origin.city}
         free_taxis = set(Taxi.objects.all()) - busy_local_taxis
@@ -401,8 +377,21 @@ def create_taxi_trip(request):
             taxi = list(free_taxis)[0]
         else:
             return JsonResponse({'status': 'false', 'message': 'All taxis are busy at that time'}, status=403)
-        taxi_trip = TaxiTrip(origin=origin, destination=destination, departure_date=date, arrival_date=None,
-                             bus_trip=bus_trip, user=user, taxi=taxi, price=price)
+        if trip == '1':
+            taxi_trip = TaxiTrip(origin=location, destination=bus_trip.origin, departure_date=date, arrival_date=None,
+                                 bus_trip=bus_trip, user=user, taxi=taxi, price=price)
+        elif trip == '2':
+            taxi_trip = TaxiTrip(origin=bus_trip.destination, destination=location, departure_date=date, arrival_date=None,
+                                 bus_trip=bus_trip, user=user, taxi=taxi, price=price)
+        elif trip == '3' and bus_trip.round_trip:
+            taxi_trip = TaxiTrip(origin=location, destination=bus_trip.destination, departure_date=date, arrival_date=None,
+                                 bus_trip=bus_trip, user=user, taxi=taxi, price=price)
+        elif trip == '4' and bus_trip.round_trip:
+            taxi_trip = TaxiTrip(origin=bus_trip.destination, destination=location, departure_date=date, arrival_date=None,
+                                 bus_trip=bus_trip, user=user, taxi=taxi, price=price)
+        else:
+            print(bus_trip.round_trip)
+            return JsonResponse({'status': 'false', 'message': 'Trip is not a number between 1 and 4 or bus trip is not a round trip'}, status=412)
         taxi_trip.save()
         serializer = TaxiTripSerializer(taxi_trip)
         return JsonResponse(serializer.data, safe=False)
@@ -421,7 +410,7 @@ def get_bus_trip(request, id):
     Returns: BusTrip
         {
             id, origin: {id, name, state, city, address}, destination: {id,
-            name, state, city, address}, departure_date, arrival_date
+            name, state, city, address}, departure_date, arrival_date, round_trip
         }
     """
     if request.method == 'GET':
@@ -452,6 +441,7 @@ def post_bus_trip(request):
             city: City
             address: Address
         date: Date and time of the trip, in format Month/Day/Year Hour:Minutes
+        roundTrip (optional): True if its a round trip
     Status:
         400: Missing data in json
         404: User or bus trip does not exist
@@ -460,7 +450,7 @@ def post_bus_trip(request):
     Returns: BusTrip
         {
             id, origin: {id, name, state, city, address}, destination: {id,
-            name, state, city, address}, departure_date, arrival_date
+            name, state, city, address}, departure_date, arrival_date, round_trip
         }
     """
     if request.method == 'POST':
@@ -479,6 +469,10 @@ def post_bus_trip(request):
             date = datetime.now()
             if 'date' in body:
                 date = datetime.strptime(body['date'], '%m/%d/%y %H:%M')
+            try:
+                round_trip = body['roundTrip']
+            except KeyError:
+                round_trip = False
         except KeyError:
             return JsonResponse({'status': 'false', 'message': 'Missing data'}, status=400)
         try:
@@ -514,7 +508,7 @@ def post_bus_trip(request):
             destination = Location(city=destination_city, address=d_address, name=d_name)
             destination.save()
         bus_trip = BusTrip(origin=origin, destination=destination,
-                           departure_date=date, arrival_date=date)
+                           departure_date=date, arrival_date=date, round_trip=round_trip)
         bus_trip.save()
         serializer = BusTripSerializer(bus_trip)
         return JsonResponse(serializer.data, safe=False)
@@ -533,7 +527,7 @@ def get_random_bus_trip(request):
     Returns: BusTrip
         {
             id, origin: {id, name, state, city, address}, destination: {id,
-            name, state, city, address}, departure_date, arrival_date
+            name, state, city, address}, departure_date, arrival_date, round_trip
         }
     """
     if request.method == 'GET':

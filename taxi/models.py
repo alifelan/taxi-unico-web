@@ -59,6 +59,7 @@ class BusTrip(models.Model):
     destination = models.ForeignKey(to=Location, related_name='busTripsD', on_delete=models.PROTECT)
     departure_date = models.DateTimeField()
     arrival_date = models.DateTimeField()
+    round_trip = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.id)
@@ -76,8 +77,8 @@ class TaxiTrip(models.Model):
                              on_delete=models.PROTECT, null=True, blank=True)
     taxi = models.ForeignKey(to=Taxi, related_name='trips', on_delete=models.PROTECT)
     price = models.FloatField(null=True, blank=True)
-    taxi_rating = models.PositiveSmallIntegerField()
-    user_rating = models.PositiveSmallIntegerField()
+    taxi_rating = models.PositiveSmallIntegerField(null=True, blank=True)
+    user_rating = models.PositiveSmallIntegerField(null=True, blank=True)
 
     def __str__(self):
         return str(self.id)

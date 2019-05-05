@@ -13,10 +13,10 @@ class TaxiSerializer(serializers.ModelSerializer):
                   'taxi_number', 'city', 'rating', 'trips')
 
     def get_rating(self, obj):
-        return sum(trip.taxi_rating for trip in TaxiTrip.objects.filter(taxi=obj)) / len(TaxiTrip.objects.filter(taxi=obj))
+        return sum(trip.taxi_rating for trip in TaxiTrip.objects.filter(taxi=obj).exclude(taxi_rating=None)) / len(TaxiTrip.objects.filter(taxi=obj).exclude(taxi_rating=None))
 
     def get_trips(self, obj):
-        return len(TaxiTrip.objects.filter(taxi=obj))
+        return len(TaxiTrip.objects.filter(taxi=obj).exclude(taxi_rating=None))
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -28,10 +28,10 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('name', 'email', 'rating', 'trips')
 
     def get_rating(self, obj):
-        return sum(trip.user_rating for trip in TaxiTrip.objects.filter(user=obj)) / len(TaxiTrip.objects.filter(user=obj))
+        return sum(trip.user_rating for trip in TaxiTrip.objects.filter(user=obj).exclude(user_rating=None)) / len(TaxiTrip.objects.filter(user=obj).exclude(user_rating=None))
 
     def get_trips(self, obj):
-        return len(TaxiTrip.objects.filter(user=obj))
+        return len(TaxiTrip.objects.filter(user=obj).exclude(user_rating=None))
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -48,7 +48,7 @@ class BusTripSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BusTrip
-        fields = ('id', 'origin', 'destination', 'departure_date', 'arrival_date')
+        fields = ('id', 'origin', 'destination', 'departure_date', 'arrival_date', 'round_trip')
 
 
 class TaxiTripSerializer(serializers.ModelSerializer):

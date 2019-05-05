@@ -205,6 +205,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
         400: Missing data in json
         404: Taxi trip does not exist
         405: Wrong method
+        412: Rating is not an integer between 1 and 5
     Returns: TaxiTrip
         {
             id, origin: {id, name, state, city, address}, destination: {id,
@@ -217,7 +218,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
 
 
 ## https://taxi-unico-api.herokuapp.com/rateUser
-    Adds rating to user in taxi trip
+    Adds rating to user in taxi trip and saves arrival date.
     Param:
         taxiTripId: Id of the taxi trip
         rating: Rating given to the user in a scale of 1 to 5
@@ -225,6 +226,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
         400: Missing data in json
         404: Taxi trip does not exist
         405: Wrong method
+        412: Rating is not an integer between 1 and 5
     Returns: TaxiTrip
         {
             id, origin: {id, name, state, city, address}, destination: {id,

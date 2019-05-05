@@ -213,6 +213,49 @@ def rate_driver(request):
         400: Missing data in json
         404: Taxi trip does not exist
         405: Wrong method
+        412: Rating is not an integer between 1 and 5
+    Returns: TaxiTrip
+        {
+            id, origin: {id, name, state, city, address}, destination: {id,
+            name, state, city, address}, date, bus_trip: {id, origin: {id, name,
+            state, city, address}, destination: {id, name, state, city,
+            address}, departure_date, arrival_date}, user: {name, email},
+            taxi: {id, driver_name, plate, model, brand, taxi_number}, price,
+            taxi_rating, user_rating
+        }
+    """
+    if request.method == 'POST':
+        body = json.loads(request.body.decode("utf-8"))
+        try:
+            taxi_trip_id = body['taxiTripId']
+            rating = body['rating']
+        except KeyError:
+            return JsonResponse({'status': 'false', 'message': 'Missing data'}, status=400)
+        if int(rating) < 1 or int(rating) > 5:
+            return JsonResponse({'status': 'false', 'message': 'Rating not in range 1-5'}, status=412)
+        try:
+            taxi_trip = TaxiTrip.objects.get(id=taxi_trip_id)
+        except ObjectDoesNotExist:
+            return JsonResponse({'status': 'false', 'message': 'Taxi trip does not exist'}, status=404)
+        taxi_trip.taxi_rating = rating
+        taxi_trip.save()
+        serializer = TaxiTripSerializer(taxi_trip)
+        return JsonResponse(serializer.data, safe=False)
+    return JsonResponse({'status': 'false', 'message': 'Only POST'}, status=405)
+
+
+@csrf_exempt
+def rate_user(request):
+    """
+    Adds rating to user in taxi trip
+    Param:
+        taxiTripId: Id of the taxi trip
+        rating: Rating given to the user in a scale of 1 to 5
+    Status:
+        400: Missing data in json
+        404: Taxi trip does not exist
+        405: Wrong method
+        412: Rating is not an integer between 1 and 5
     Returns: TaxiTrip
         {
             id, origin: {id, name, state, city, address}, destination: {id,
@@ -231,51 +274,14 @@ def rate_driver(request):
             arrival_date = body['arrivalDate']
         except KeyError:
             return JsonResponse({'status': 'false', 'message': 'Missing data'}, status=400)
-        try:
-            taxi_trip = TaxiTrip.objects.get(id=taxi_trip_id)
-        except ObjectDoesNotExist:
-            return JsonResponse({'status': 'false', 'message': 'Taxi trip does not exist'}, status=404)
-        taxi_trip.taxi_rating = rating
-        taxi_trip.arrival_date = datetime.strptime(arrival_date, '%m/%d/%y %H:%M')
-        taxi_trip.save()
-        serializer = TaxiTripSerializer(taxi_trip)
-        return JsonResponse(serializer.data, safe=False)
-    return JsonResponse({'status': 'false', 'message': 'Only POST'}, status=405)
-
-
-@csrf_exempt
-def rate_user(request):
-    """
-    Adds rating to user in taxi trip
-    Param:
-        taxiTripId: Id of the taxi trip
-        rating: Rating given to the user in a scale of 1 to 5
-    Status:
-        400: Missing data in json
-        404: Taxi trip does not exist
-        405: Wrong method
-    Returns: TaxiTrip
-        {
-            id, origin: {id, name, state, city, address}, destination: {id,
-            name, state, city, address}, date, bus_trip: {id, origin: {id, name,
-            state, city, address}, destination: {id, name, state, city,
-            address}, departure_date, arrival_date}, user: {name, email},
-            taxi: {id, driver_name, plate, model, brand, taxi_number}, price,
-            taxi_rating, user_rating
-        }
-    """
-    if request.method == 'POST':
-        body = json.loads(request.body.decode("utf-8"))
-        try:
-            taxi_trip_id = body['taxiTripId']
-            rating = body['rating']
-        except KeyError:
-            return JsonResponse({'status': 'false', 'message': 'Missing data'}, status=400)
+        if int(rating) < 1 or int(rating) > 5:
+            return JsonResponse({'status': 'false', 'message': 'Rating not in range 1-5'}, status=412)
         try:
             taxi_trip = TaxiTrip.objects.get(id=taxi_trip_id)
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'false', 'message': 'Taxi trip does not exist'}, status=404)
         taxi_trip.user_rating = rating
+        taxi_trip.arrival_date = datetime.strptime(arrival_date, '%m/%d/%y %H:%M')
         taxi_trip.save()
         serializer = TaxiTripSerializer(taxi_trip)
         return JsonResponse(serializer.data, safe=False)

@@ -76,6 +76,8 @@ class TaxiTrip(models.Model):
                              on_delete=models.PROTECT, null=True, blank=True)
     taxi = models.ForeignKey(to=Taxi, related_name='trips', on_delete=models.PROTECT)
     price = models.FloatField(null=True, blank=True)
+    taxi_rating = models.PositiveSmallIntegerField()
+    user_rating = models.PositiveSmallIntegerField()
 
     def __str__(self):
         return str(self.id)

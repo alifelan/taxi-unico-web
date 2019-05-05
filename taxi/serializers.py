@@ -4,16 +4,34 @@ from taxi.models import Taxi, User, TaxiTrip, BusTrip, Location
 
 class TaxiSerializer(serializers.ModelSerializer):
     city = serializers.StringRelatedField()
+    rating = serializers.SerializerMethodField()
+    trips = serializers.SerializerMethodField()
 
     class Meta:
         model = Taxi
-        fields = ('id', 'driver_name', 'plate', 'model', 'brand', 'taxi_number', 'city')
+        fields = ('id', 'driver_name', 'plate', 'model', 'brand',
+                  'taxi_number', 'city', 'rating', 'trips')
+
+    def get_rating(self, obj):
+        return sum(trip.taxi_rating for trip in TaxiTrip.objects.filter(taxi=obj)) / len(TaxiTrip.objects.filter(taxi=obj))
+
+    def get_trips(self, obj):
+        return len(TaxiTrip.objects.filter(taxi=obj))
 
 
 class UserSerializer(serializers.ModelSerializer):
+    rating = serializers.SerializerMethodField()
+    trips = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ('name', 'email')
+        fields = ('name', 'email', 'rating', 'trips')
+
+    def get_rating(self, obj):
+        return sum(trip.user_rating for trip in TaxiTrip.objects.filter(user=obj)) / len(TaxiTrip.objects.filter(user=obj))
+
+    def get_trips(self, obj):
+        return len(TaxiTrip.objects.filter(user=obj))
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -43,4 +61,5 @@ class TaxiTripSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaxiTrip
         fields = ('id', 'origin', 'destination', 'departure_date',
-                  'arrival_date', 'bus_trip', 'user', 'taxi', 'price')
+                  'arrival_date', 'bus_trip', 'user', 'taxi', 'price',
+                  'taxi_rating', 'user_rating')

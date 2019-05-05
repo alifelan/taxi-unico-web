@@ -19,7 +19,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             405: User exists, use PUT to update data
         Returns: User
             {
-                name, email
+                name, email, rating, trips
             }
 
     PUT:
@@ -33,7 +33,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             404: User does not exist
         Returns: User
             {
-                name, email
+                name, email, rating, trips
             }
 
 
@@ -52,7 +52,8 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             name, state, city, address}, date, bus_trip: {id, origin: {id, name,
             state, city, address}, destination: {id, name, state, city,
             address}, departure_date, arrival_date}, user: {name, email},
-            taxi: {id, driver_name, plate, model, brand, taxi_number}
+            taxi: {id, driver_name, plate, model, brand, taxi_number}, price,
+            taxi_rating, user_rating
         }]
 
 
@@ -86,7 +87,8 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             name, state, city, address}, date, bus_trip: {id, origin: {id, name,
             state, city, address}, destination: {id, name, state, city,
             address}, departure_date, arrival_date}, user: {name, email},
-            taxi: {id, driver_name, plate, model, brand, taxi_number, price}
+            taxi: {id, driver_name, plate, model, brand, taxi_number}, price,
+            taxi_rating, user_rating
         }
 
 
@@ -164,3 +166,71 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
         405: Wrong method
     Returns:
         {status, message}
+
+
+## https://taxi-unico-api.herokuapp.com/user/<email>
+    Returns details of a user
+    Param:
+        email: user email
+    Status:
+        400: Missing data in json
+        404: User does not exist
+        405: Wrong method
+    Returns: User
+        {
+            name, email, rating, trips
+        }
+
+
+## https://taxi-unico-api.herokuapp.com/taxi/<id>
+    Returns details of a taxi
+    Param:
+        id: taxi id
+    Status:
+        400: Missing data in json
+        404: Taxi does not exist
+        405: Wrong method
+    Returns: Taxi
+        {
+            id, driver_name, plate, model, brand, taxi_number, city, rating, trips
+        }
+
+
+## https://taxi-unico-api.herokuapp.com/rateDriver
+    Adds rating to driver in taxi trip
+    Param:
+        taxiTripId: Id of the taxi trip
+        rating: Rating given to the driver in a scale of 1 to 5
+    Status:
+        400: Missing data in json
+        404: Taxi trip does not exist
+        405: Wrong method
+    Returns: TaxiTrip
+        {
+            id, origin: {id, name, state, city, address}, destination: {id,
+            name, state, city, address}, date, bus_trip: {id, origin: {id, name,
+            state, city, address}, destination: {id, name, state, city,
+            address}, departure_date, arrival_date}, user: {name, email},
+            taxi: {id, driver_name, plate, model, brand, taxi_number}, price,
+            taxi_rating, user_rating
+        }
+
+
+## https://taxi-unico-api.herokuapp.com/rateUser
+    Adds rating to user in taxi trip
+    Param:
+        taxiTripId: Id of the taxi trip
+        rating: Rating given to the user in a scale of 1 to 5
+    Status:
+        400: Missing data in json
+        404: Taxi trip does not exist
+        405: Wrong method
+    Returns: TaxiTrip
+        {
+            id, origin: {id, name, state, city, address}, destination: {id,
+            name, state, city, address}, date, bus_trip: {id, origin: {id, name,
+            state, city, address}, destination: {id, name, state, city,
+            address}, departure_date, arrival_date}, user: {name, email},
+            taxi: {id, driver_name, plate, model, brand, taxi_number}, price,
+            taxi_rating, user_rating
+        }

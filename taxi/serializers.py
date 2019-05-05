@@ -14,7 +14,8 @@ class TaxiSerializer(serializers.ModelSerializer):
 
     def get_rating(self, obj):
         number_of_trips = len(TaxiTrip.objects.filter(taxi=obj).exclude(taxi_rating=None))
-        if number_of_trips == 0 return 5
+        if number_of_trips == 0:
+            return 5
         return sum(trip.taxi_rating for trip in TaxiTrip.objects.filter(taxi=obj).exclude(taxi_rating=None)) / len(TaxiTrip.objects.filter(taxi=obj).exclude(taxi_rating=None))
 
     def get_trips(self, obj):
@@ -31,7 +32,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_rating(self, obj):
         number_of_trips = len(TaxiTrip.objects.filter(user=obj).exclude(user_rating=None))
-        if number_of_trips == 0 return 5
+        if number_of_trips == 0:
+            return 5
         return sum(trip.user_rating for trip in TaxiTrip.objects.filter(user=obj).exclude(user_rating=None)) / len(TaxiTrip.objects.filter(user=obj).exclude(user_rating=None))
 
     def get_trips(self, obj):

@@ -35,6 +35,8 @@ class Location(models.Model):
     name = models.CharField(max_length=50)
     city = models.ForeignKey(to=City, related_name='locations', on_delete=models.CASCADE)
     address = models.CharField(max_length=50)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
 
     def __str__(self):
         return self.name
@@ -79,6 +81,10 @@ class TaxiTrip(models.Model):
     price = models.FloatField(null=True, blank=True)
     taxi_rating = models.PositiveSmallIntegerField(null=True, blank=True)
     user_rating = models.PositiveSmallIntegerField(null=True, blank=True)
+    distance_meters = models.FloatField()
+    distance_string = models.CharField(max_length=100)
+    time_seconds = models.BigIntegerField()
+    time_string = models.CharField(max_length=100)
 
     def __str__(self):
         return str(self.id)

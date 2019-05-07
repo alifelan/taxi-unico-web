@@ -45,12 +45,16 @@ class LocationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Location
-        fields = ('id', 'name', 'city', 'address')
+        fields = ('id', 'name', 'city', 'address', 'latitude', 'longitude')
 
 
 class BusTripSerializer(serializers.ModelSerializer):
     origin = LocationSerializer(read_only=True)
     destination = LocationSerializer(read_only=True)
+    departure_date = serializers.DateTimeField(
+        format='%m/%d/%y %H:%M', required=False, read_only=True)
+    arrival_date = serializers.DateTimeField(
+        format='%m/%d/%y %H:%M', required=False, read_only=True)
 
     class Meta:
         model = BusTrip
@@ -63,9 +67,14 @@ class TaxiTripSerializer(serializers.ModelSerializer):
     bus_trip = BusTripSerializer(read_only=True)
     user = UserSerializer(read_only=True)
     taxi = TaxiSerializer(read_only=True)
+    departure_date = serializers.DateTimeField(
+        format='%m/%d/%y %H:%M', required=False, read_only=True)
+    arrival_date = serializers.DateTimeField(
+        format='%m/%d/%y %H:%M', required=False, read_only=True)
 
     class Meta:
         model = TaxiTrip
         fields = ('id', 'origin', 'destination', 'departure_date',
                   'arrival_date', 'bus_trip', 'user', 'taxi', 'price',
-                  'taxi_rating', 'user_rating')
+                  'taxi_rating', 'user_rating', 'distance_meters',
+                  'distance_string', 'time_seconds', 'time_string')

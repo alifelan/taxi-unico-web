@@ -48,12 +48,13 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
         405: Wrong method
     Returns: [TaxiTrip]
         [{
-            id, origin: {id, name, state, city, address}, destination: {id,
-            name, state, city, address}, date, bus_trip: {id, origin: {id, name,
-            state, city, address}, destination: {id, name, state, city,
-            address}, departure_date, arrival_date}, user: {name, email},
-            taxi: {id, driver_name, plate, model, brand, taxi_number}, price,
-            taxi_rating, user_rating
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, departure_date, arrival_date},
+            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating
         }]
 
 
@@ -83,12 +84,13 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
         412: Trip is not between 1 and 4 or bus trip is not a round trip
     Returns: TaxiTrip
         {
-            id, origin: {id, name, state, city, address}, destination: {id,
-            name, state, city, address}, date, bus_trip: {id, origin: {id, name,
-            state, city, address}, destination: {id, name, state, city,
-            address}, departure_date, arrival_date}, user: {name, email},
-            taxi: {id, driver_name, plate, model, brand, taxi_number}, price,
-            taxi_rating, user_rating
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, departure_date, arrival_date},
+            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating
         }
 
 
@@ -118,8 +120,9 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
         405: Wrong method
     Returns: BusTrip
         {
-            id, origin: {id, name, state, city, address}, destination: {id,
-            name, state, city, address}, departure_date, arrival_date
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            departure_date, arrival_date, round_trip
         }
 
 
@@ -133,8 +136,9 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
         404: Bus trip with id doesnt exist
     Returns: BusTrip
         {
-            id, origin: {id, name, state, city, address}, destination: {id,
-            name, state, city, address}, departure_date, arrival_date
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            departure_date, arrival_date, round_trip
         }
 
 
@@ -148,8 +152,9 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
         405: Wrong method
     Returns: BusTrip
         {
-            id, origin: {id, name, state, city, address}, destination: {id,
-            name, state, city, address}, departure_date, arrival_date
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            departure_date, arrival_date, round_trip
         }
 
 
@@ -209,12 +214,13 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
         412: Rating is not an integer between 1 and 5
     Returns: TaxiTrip
         {
-            id, origin: {id, name, state, city, address}, destination: {id,
-            name, state, city, address}, date, bus_trip: {id, origin: {id, name,
-            state, city, address}, destination: {id, name, state, city,
-            address}, departure_date, arrival_date}, user: {name, email},
-            taxi: {id, driver_name, plate, model, brand, taxi_number}, price,
-            taxi_rating, user_rating
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, departure_date, arrival_date},
+            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating
         }
 
 
@@ -230,10 +236,11 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
         412: Rating is not an integer between 1 and 5
     Returns: TaxiTrip
         {
-            id, origin: {id, name, state, city, address}, destination: {id,
-            name, state, city, address}, date, bus_trip: {id, origin: {id, name,
-            state, city, address}, destination: {id, name, state, city,
-            address}, departure_date, arrival_date}, user: {name, email},
-            taxi: {id, driver_name, plate, model, brand, taxi_number}, price,
-            taxi_rating, user_rating
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, departure_date, arrival_date},
+            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating
         }

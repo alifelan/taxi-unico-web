@@ -182,12 +182,13 @@ def get_user_taxi_trips(request, email):
         405: Wrong method
     Returns: [TaxiTrip]
         [{
-            id, origin: {id, name, state, city, address}, destination: {id,
-            name, state, city, address}, date, bus_trip: {id, origin: {id, name,
-            state, city, address}, destination: {id, name, state, city,
-            address}, departure_date, arrival_date}, user: {name, email},
-            taxi: {id, driver_name, plate, model, brand, taxi_number}, price,
-            taxi_rating, user_rating
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, departure_date, arrival_date},
+            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating
         }]
     """
     if request.method == 'GET':
@@ -216,12 +217,13 @@ def rate_driver(request):
         412: Rating is not an integer between 1 and 5
     Returns: TaxiTrip
         {
-            id, origin: {id, name, state, city, address}, destination: {id,
-            name, state, city, address}, date, bus_trip: {id, origin: {id, name,
-            state, city, address}, destination: {id, name, state, city,
-            address}, departure_date, arrival_date}, user: {name, email},
-            taxi: {id, driver_name, plate, model, brand, taxi_number}, price,
-            taxi_rating, user_rating
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, departure_date, arrival_date},
+            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating
         }
     """
     if request.method == 'POST':
@@ -258,12 +260,13 @@ def rate_user(request):
         412: Rating is not an integer between 1 and 5
     Returns: TaxiTrip
         {
-            id, origin: {id, name, state, city, address}, destination: {id,
-            name, state, city, address}, date, bus_trip: {id, origin: {id, name,
-            state, city, address}, destination: {id, name, state, city,
-            address}, departure_date, arrival_date}, user: {name, email},
-            taxi: {id, driver_name, plate, model, brand, taxi_number}, price,
-            taxi_rating, user_rating
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, departure_date, arrival_date},
+            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating
         }
     """
     if request.method == 'POST':
@@ -315,12 +318,13 @@ def create_taxi_trip(request):
         412: Trip is not between 1 and 4 or bus trip is not a round trip
     Returns: TaxiTrip
         {
-            id, origin: {id, name, state, city, address}, destination: {id,
-            name, state, city, address}, date, bus_trip: {id, origin: {id, name,
-            state, city, address}, destination: {id, name, state, city,
-            address}, departure_date, arrival_date}, user: {name, email},
-            taxi: {id, driver_name, plate, model, brand, taxi_number}, price,
-            taxi_rating, user_rating
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, departure_date, arrival_date},
+            user: {name, email}, taxi: {id, driver_name, plate, model, brand, 
+            taxi_number}, price, taxi_rating, user_rating
         }
     """
     if request.method == 'POST':
@@ -331,6 +335,12 @@ def create_taxi_trip(request):
             if 'date' in body:
                 date = datetime.strptime(body['date'], '%m/%d/%y %H:%M')
             bus_trip_id = body['busTripId']
+            distance_json = body['distance']
+            distance_meters = distance_json['value']
+            distance_string = distance_json['text']
+            time_json = body['duration']
+            time_seconds = time_json['value']
+            time_string = time_json['text']
         except KeyError:
             return JsonResponse({'status': 'false', 'message': 'Missing data'}, status=400)
         try:
@@ -379,18 +389,21 @@ def create_taxi_trip(request):
             return JsonResponse({'status': 'false', 'message': 'All taxis are busy at that time'}, status=403)
         if trip == '1':
             taxi_trip = TaxiTrip(origin=location, destination=bus_trip.origin, departure_date=date, arrival_date=None,
-                                 bus_trip=bus_trip, user=user, taxi=taxi, price=price)
+                                 bus_trip=bus_trip, user=user, taxi=taxi, price=price, distance_meters=distance_meters,
+                                 distance_string=distance_string, time_seconds=time_seconds, time_string=time_string)
         elif trip == '2':
             taxi_trip = TaxiTrip(origin=bus_trip.destination, destination=location, departure_date=date, arrival_date=None,
-                                 bus_trip=bus_trip, user=user, taxi=taxi, price=price)
+                                 bus_trip=bus_trip, user=user, taxi=taxi, price=price, distance_meters=distance_meters,
+                                 distance_string=distance_string, time_seconds=time_seconds, time_string=time_string)
         elif trip == '3' and bus_trip.round_trip:
             taxi_trip = TaxiTrip(origin=location, destination=bus_trip.destination, departure_date=date, arrival_date=None,
-                                 bus_trip=bus_trip, user=user, taxi=taxi, price=price)
+                                 bus_trip=bus_trip, user=user, taxi=taxi, price=price, distance_meters=distance_meters,
+                                 distance_string=distance_string, time_seconds=time_seconds, time_string=time_string)
         elif trip == '4' and bus_trip.round_trip:
             taxi_trip = TaxiTrip(origin=bus_trip.destination, destination=location, departure_date=date, arrival_date=None,
-                                 bus_trip=bus_trip, user=user, taxi=taxi, price=price)
+                                 bus_trip=bus_trip, user=user, taxi=taxi, price=price, distance_meters=distance_meters,
+                                 distance_string=distance_string, time_seconds=time_seconds, time_string=time_string)
         else:
-            print(bus_trip.round_trip)
             return JsonResponse({'status': 'false', 'message': 'Trip is not a number between 1 and 4 or bus trip is not a round trip'}, status=412)
         taxi_trip.save()
         serializer = TaxiTripSerializer(taxi_trip)
@@ -409,8 +422,9 @@ def get_bus_trip(request, id):
         404: Bus trip with id doesnt exist
     Returns: BusTrip
         {
-            id, origin: {id, name, state, city, address}, destination: {id,
-            name, state, city, address}, departure_date, arrival_date, round_trip
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            departure_date, arrival_date, round_trip
         }
     """
     if request.method == 'GET':
@@ -449,8 +463,9 @@ def post_bus_trip(request):
         405: Wrong method
     Returns: BusTrip
         {
-            id, origin: {id, name, state, city, address}, destination: {id,
-            name, state, city, address}, departure_date, arrival_date, round_trip
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            departure_date, arrival_date, round_trip
         }
     """
     if request.method == 'POST':
@@ -526,8 +541,9 @@ def get_random_bus_trip(request):
         405: Wrong method
     Returns: BusTrip
         {
-            id, origin: {id, name, state, city, address}, destination: {id,
-            name, state, city, address}, departure_date, arrival_date, round_trip
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            departure_date, arrival_date, round_trip
         }
     """
     if request.method == 'GET':

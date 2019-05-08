@@ -186,7 +186,8 @@ def get_user_taxi_trips(request, email):
             destination: {id, name, state, city, address, latitude, longitude},
             date, bus_trip: {id, origin: {id, name, state, city, address,
             latitude, longitude}, destination: {id, name, state, city,
-            address, latitude, longitude}, departure_date, arrival_date, round_trip},
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
             user: {name, email}, taxi: {id, driver_name, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }]
@@ -221,7 +222,8 @@ def rate_driver(request):
             destination: {id, name, state, city, address, latitude, longitude},
             date, bus_trip: {id, origin: {id, name, state, city, address,
             latitude, longitude}, destination: {id, name, state, city,
-            address, latitude, longitude}, departure_date, arrival_date, round_trip},
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
             user: {name, email}, taxi: {id, driver_name, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }
@@ -264,7 +266,8 @@ def rate_user(request):
             destination: {id, name, state, city, address, latitude, longitude},
             date, bus_trip: {id, origin: {id, name, state, city, address,
             latitude, longitude}, destination: {id, name, state, city,
-            address, latitude, longitude}, departure_date, arrival_date, round_trip},
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
             user: {name, email}, taxi: {id, driver_name, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }
@@ -321,7 +324,8 @@ def create_taxi_trip(request):
             destination: {id, name, state, city, address, latitude, longitude},
             date, bus_trip: {id, origin: {id, name, state, city, address,
             latitude, longitude}, destination: {id, name, state, city,
-            address, latitude, longitude}, departure_date, arrival_date, round_trip},
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
             user: {name, email}, taxi: {id, driver_name, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }
@@ -430,7 +434,8 @@ def get_bus_trip(request, id):
         {
             id, origin: {id, name, state, city, address, latitude, longitude},
             destination: {id, name, state, city, address, latitude, longitude},
-            departure_date, arrival_date, round_trip
+            first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip
         }
     """
     if request.method == 'GET':
@@ -471,7 +476,8 @@ def post_bus_trip(request):
         {
             id, origin: {id, name, state, city, address, latitude, longitude},
             destination: {id, name, state, city, address, latitude, longitude},
-            departure_date, arrival_date, round_trip
+            first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip
         }
     """
     if request.method == 'POST':
@@ -529,7 +535,9 @@ def post_bus_trip(request):
             destination = Location(city=destination_city, address=d_address, name=d_name)
             destination.save()
         bus_trip = BusTrip(origin=origin, destination=destination,
-                           departure_date=date, arrival_date=date, round_trip=round_trip)
+                           first_departure_date=date, first_arrival_date=date,
+                           second_departure_date=None, second_arrival_date=None,
+                           round_trip=round_trip)
         bus_trip.save()
         serializer = BusTripSerializer(bus_trip)
         return JsonResponse(serializer.data, safe=False)
@@ -549,7 +557,8 @@ def get_random_bus_trip(request):
         {
             id, origin: {id, name, state, city, address, latitude, longitude},
             destination: {id, name, state, city, address, latitude, longitude},
-            departure_date, arrival_date, round_trip
+            first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip
         }
     """
     if request.method == 'GET':

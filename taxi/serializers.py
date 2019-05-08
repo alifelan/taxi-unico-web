@@ -51,14 +51,20 @@ class LocationSerializer(serializers.ModelSerializer):
 class BusTripSerializer(serializers.ModelSerializer):
     origin = LocationSerializer(read_only=True)
     destination = LocationSerializer(read_only=True)
-    departure_date = serializers.DateTimeField(
+    first_departure_date = serializers.DateTimeField(
         format='%m/%d/%y %H:%M', required=False, read_only=True)
-    arrival_date = serializers.DateTimeField(
+    first_arrival_date = serializers.DateTimeField(
+        format='%m/%d/%y %H:%M', required=False, read_only=True)
+    second_departure_date = serializers.DateTimeField(
+        format='%m/%d/%y %H:%M', required=False, read_only=True)
+    second_arrival_date = serializers.DateTimeField(
         format='%m/%d/%y %H:%M', required=False, read_only=True)
 
     class Meta:
         model = BusTrip
-        fields = ('id', 'origin', 'destination', 'departure_date', 'arrival_date', 'round_trip')
+        fields = ('id', 'origin', 'destination', 'first_departure_date',
+                  'first_arrival_date', 'second_departure_date', 'second_arrival_date',
+                  'round_trip')
 
 
 class TaxiTripSerializer(serializers.ModelSerializer):

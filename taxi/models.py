@@ -59,8 +59,10 @@ class BusTrip(models.Model):
     id = models.AutoField(primary_key=True)
     origin = models.ForeignKey(to=Location, related_name='busTripsO', on_delete=models.PROTECT)
     destination = models.ForeignKey(to=Location, related_name='busTripsD', on_delete=models.PROTECT)
-    departure_date = models.DateTimeField()
-    arrival_date = models.DateTimeField()
+    first_departure_date = models.DateTimeField()
+    first_arrival_date = models.DateTimeField()
+    second_departure_date = models.DateTimeField(null=True, blank=True)
+    second_arrival_date = models.DateTimeField(null=True, blank=True)
     round_trip = models.BooleanField(default=False)
 
     def __str__(self):

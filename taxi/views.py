@@ -312,6 +312,12 @@ def create_taxi_trip(request):
             to origin with 4.
         userEmail (optional): user email
         price: trip price
+        duration:
+            value: Value in seconds
+            text: Value as string
+        distance:
+            value: Value in meters
+            text: Value as string
     Status:
         400: Missing data in json
         404: User or bus trip does not exist

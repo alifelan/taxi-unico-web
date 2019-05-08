@@ -305,6 +305,8 @@ def create_taxi_trip(request):
             state: State
             city: City
             address: Address
+            latitude: Latitude 
+            longitude: Longitude
         busTripId: Identifier of the bus trip
         trip: Number from 1 to 4, symbolizing if its a trip from origin to origin
             station with 1, a trip from destination station to destination with 2,
@@ -367,6 +369,8 @@ def create_taxi_trip(request):
             location_state = location_json['state']
             location_city = location_json['city']
             location_address = location_json['address']
+            location_latitude = location_json['latitude']
+            location_longitude = location_json['longitude']
             try:
                 state = State.objects.get(state=location_state)
             except ObjectDoesNotExist:
@@ -379,9 +383,10 @@ def create_taxi_trip(request):
                 city.save()
             try:
                 location = Location.objects.get(
-                    city=city, name=location_name, address=location_address)
+                    city=city, name=location_name, address=location_address,)
             except ObjectDoesNotExist:
-                location = Location(city=city, address=location_address, name=location_name)
+                location = Location(city=city, address=location_address, name=location_name,
+                                    latitude=location_latitude, longitude=location_longitude)
                 location.save()
             trip = body['trip']
         except KeyError:

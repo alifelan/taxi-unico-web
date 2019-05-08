@@ -68,6 +68,8 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             state: State
             city: City
             address: Address
+            latitude: Latitude
+            longitude: Longitude
         busTripId: Identifier of the bus trip
         trip: Number from 1 to 4, symbolizing if its a trip from origin to origin
             station with 1, a trip from destination station to destination with 2,

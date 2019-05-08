@@ -371,7 +371,7 @@ def create_taxi_trip(request):
                 state = State.objects.get(state=location_state)
             except ObjectDoesNotExist:
                 state = State(state=location_state)
-                location_state.save()
+                state.save()
             try:
                 city = City.objects.get(state=state, city=location_city)
             except ObjectDoesNotExist:

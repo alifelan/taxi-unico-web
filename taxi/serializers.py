@@ -55,16 +55,20 @@ class BusTripSerializer(serializers.ModelSerializer):
         format='%m/%d/%y %H:%M', required=False, read_only=True)
     first_arrival_date = serializers.DateTimeField(
         format='%m/%d/%y %H:%M', required=False, read_only=True)
-    second_departure_date = serializers.DateTimeField(
-        format='%m/%d/%y %H:%M', required=False, read_only=True)
-    second_arrival_date = serializers.DateTimeField(
-        format='%m/%d/%y %H:%M', required=False, read_only=True)
+    second_departure_date = serializers.SerializerMethodField()
+    second_arrival_date = serializers.SerializerMethodField()
 
     class Meta:
         model = BusTrip
         fields = ('id', 'origin', 'destination', 'first_departure_date',
                   'first_arrival_date', 'second_departure_date', 'second_arrival_date',
                   'round_trip')
+
+    def get_second_departure_date(self, obj):
+        return (obj.second_departure_date.strftime('%m/%d/%y %H:%M') if obj.second_departure_date else '')
+
+    def get_second_arrival_date(self, obj):
+        return (obj.second_arrival_date.strftime('%m/%d/%y %H:%M') if obj.second_arrival_date else '')
 
 
 class TaxiTripSerializer(serializers.ModelSerializer):

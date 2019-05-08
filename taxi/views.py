@@ -5,7 +5,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from taxi.models import Taxi, User, Location, BusTrip, TaxiTrip, State, City
 from taxi.serializers import TaxiSerializer, UserSerializer, LocationSerializer, BusTripSerializer, TaxiTripSerializer
-from datetime import datetime
+from datetime import datetime, timedelta
 from random import randint
 import json
 
@@ -186,7 +186,7 @@ def get_user_taxi_trips(request, email):
             destination: {id, name, state, city, address, latitude, longitude},
             date, bus_trip: {id, origin: {id, name, state, city, address,
             latitude, longitude}, destination: {id, name, state, city,
-            address, latitude, longitude}, departure_date, arrival_date},
+            address, latitude, longitude}, departure_date, arrival_date, round_trip},
             user: {name, email}, taxi: {id, driver_name, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }]
@@ -221,7 +221,7 @@ def rate_driver(request):
             destination: {id, name, state, city, address, latitude, longitude},
             date, bus_trip: {id, origin: {id, name, state, city, address,
             latitude, longitude}, destination: {id, name, state, city,
-            address, latitude, longitude}, departure_date, arrival_date},
+            address, latitude, longitude}, departure_date, arrival_date, round_trip},
             user: {name, email}, taxi: {id, driver_name, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }
@@ -264,7 +264,7 @@ def rate_user(request):
             destination: {id, name, state, city, address, latitude, longitude},
             date, bus_trip: {id, origin: {id, name, state, city, address,
             latitude, longitude}, destination: {id, name, state, city,
-            address, latitude, longitude}, departure_date, arrival_date},
+            address, latitude, longitude}, departure_date, arrival_date, round_trip},
             user: {name, email}, taxi: {id, driver_name, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }
@@ -302,7 +302,6 @@ def create_taxi_trip(request):
             state: State
             city: City
             address: Address
-        date: Date and time of the trip, in format Month/Day/Year Hour:Minutes
         busTripId: Identifier of the bus trip
         trip: Number from 1 to 4, symbolizing if its a trip from origin to origin
             station with 1, a trip from destination station to destination with 2,
@@ -322,8 +321,8 @@ def create_taxi_trip(request):
             destination: {id, name, state, city, address, latitude, longitude},
             date, bus_trip: {id, origin: {id, name, state, city, address,
             latitude, longitude}, destination: {id, name, state, city,
-            address, latitude, longitude}, departure_date, arrival_date},
-            user: {name, email}, taxi: {id, driver_name, plate, model, brand, 
+            address, latitude, longitude}, departure_date, arrival_date, round_trip},
+            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }
     """
@@ -331,9 +330,6 @@ def create_taxi_trip(request):
         body = json.loads(request.body.decode("utf-8"))
         try:
             price = body['price']
-            date = datetime.now()
-            if 'date' in body:
-                date = datetime.strptime(body['date'], '%m/%d/%y %H:%M')
             bus_trip_id = body['busTripId']
             distance_json = body['distance']
             distance_meters = distance_json['value']
@@ -387,20 +383,30 @@ def create_taxi_trip(request):
             taxi = list(free_taxis)[0]
         else:
             return JsonResponse({'status': 'false', 'message': 'All taxis are busy at that time'}, status=403)
+        arrival_date = date + timedelta(seconds=int(time_seconds))
+        departure_date = date
         if trip == '1':
-            taxi_trip = TaxiTrip(origin=location, destination=bus_trip.origin, departure_date=date, arrival_date=None,
+            arrival_date = bus_trip.departure_date - timedelta(minutes=30)
+            departure_date = arrival_date - timedelta(seconds=int(time_seconds))
+            taxi_trip = TaxiTrip(origin=location, destination=bus_trip.origin, departure_date=departure_date, arrival_date=arrival_date,
                                  bus_trip=bus_trip, user=user, taxi=taxi, price=price, distance_meters=distance_meters,
                                  distance_string=distance_string, time_seconds=time_seconds, time_string=time_string)
         elif trip == '2':
-            taxi_trip = TaxiTrip(origin=bus_trip.destination, destination=location, departure_date=date, arrival_date=None,
+            departure_date = bus_trip.arrival_date
+            arrival_date = departure_date + timedelta(seconds=int(time_seconds))
+            taxi_trip = TaxiTrip(origin=bus_trip.destination, destination=location, departure_date=departure_date, arrival_date=arrival_date,
                                  bus_trip=bus_trip, user=user, taxi=taxi, price=price, distance_meters=distance_meters,
                                  distance_string=distance_string, time_seconds=time_seconds, time_string=time_string)
         elif trip == '3' and bus_trip.round_trip:
-            taxi_trip = TaxiTrip(origin=location, destination=bus_trip.destination, departure_date=date, arrival_date=None,
+            arrival_date = bus_trip.departure_date - timedelta(minutes=30)
+            departure_date = arrival_date - timedelta(seconds=int(time_seconds))
+            taxi_trip = TaxiTrip(origin=location, destination=bus_trip.destination, departure_date=departure_date, arrival_date=arrival_date,
                                  bus_trip=bus_trip, user=user, taxi=taxi, price=price, distance_meters=distance_meters,
                                  distance_string=distance_string, time_seconds=time_seconds, time_string=time_string)
         elif trip == '4' and bus_trip.round_trip:
-            taxi_trip = TaxiTrip(origin=bus_trip.destination, destination=location, departure_date=date, arrival_date=None,
+            departure_date = bus_trip.arrival_date
+            arrival_date = departure_date + timedelta(seconds=int(time_seconds))
+            taxi_trip = TaxiTrip(origin=bus_trip.destination, destination=location, departure_date=departure_date, arrival_date=arrival_date,
                                  bus_trip=bus_trip, user=user, taxi=taxi, price=price, distance_meters=distance_meters,
                                  distance_string=distance_string, time_seconds=time_seconds, time_string=time_string)
         else:

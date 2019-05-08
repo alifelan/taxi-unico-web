@@ -52,7 +52,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             destination: {id, name, state, city, address, latitude, longitude},
             date, bus_trip: {id, origin: {id, name, state, city, address,
             latitude, longitude}, destination: {id, name, state, city,
-            address, latitude, longitude}, departure_date, arrival_date},
+            address, latitude, longitude}, departure_date, arrival_date, round_trip},
             user: {name, email}, taxi: {id, driver_name, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }]
@@ -68,7 +68,6 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             state: State
             city: City
             address: Address
-        date: Date and time of the trip, in format Month/Day/Year Hour:Minutes
         busTripId: Identifier of the bus trip
         trip: Number from 1 to 4, symbolizing if its a trip from origin to origin
             station with 1, a trip from destination station to destination with 2,
@@ -88,7 +87,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             destination: {id, name, state, city, address, latitude, longitude},
             date, bus_trip: {id, origin: {id, name, state, city, address,
             latitude, longitude}, destination: {id, name, state, city,
-            address, latitude, longitude}, departure_date, arrival_date},
+            address, latitude, longitude}, departure_date, arrival_date, round_trip},
             user: {name, email}, taxi: {id, driver_name, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }
@@ -218,7 +217,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             destination: {id, name, state, city, address, latitude, longitude},
             date, bus_trip: {id, origin: {id, name, state, city, address,
             latitude, longitude}, destination: {id, name, state, city,
-            address, latitude, longitude}, departure_date, arrival_date},
+            address, latitude, longitude}, departure_date, arrival_date, round_trip},
             user: {name, email}, taxi: {id, driver_name, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }
@@ -240,7 +239,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             destination: {id, name, state, city, address, latitude, longitude},
             date, bus_trip: {id, origin: {id, name, state, city, address,
             latitude, longitude}, destination: {id, name, state, city,
-            address, latitude, longitude}, departure_date, arrival_date},
+            address, latitude, longitude}, departure_date, arrival_date, round_trip},
             user: {name, email}, taxi: {id, driver_name, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }

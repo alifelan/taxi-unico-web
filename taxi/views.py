@@ -391,7 +391,7 @@ def create_taxi_trip(request):
             trip = body['trip']
         except KeyError:
             return JsonResponse({'status': 'false', 'message': 'Missing data'}, status=400)
-        if trip == '1':
+        if int(trip) == 1:
             arrival_date = bus_trip.departure_date - timedelta(minutes=30)
             departure_date = arrival_date - timedelta(seconds=int(time_seconds))
             trips = TaxiTrip.objects.filter(arrival_date=departure_date)
@@ -404,7 +404,7 @@ def create_taxi_trip(request):
             taxi_trip = TaxiTrip(origin=location, destination=bus_trip.origin, departure_date=departure_date, arrival_date=arrival_date,
                                  bus_trip=bus_trip, user=user, taxi=taxi, price=price, distance_meters=distance_meters,
                                  distance_string=distance_string, time_seconds=time_seconds, time_string=time_string)
-        elif trip == '2':
+        elif int(trip) == 2:
             departure_date = bus_trip.arrival_date
             arrival_date = departure_date + timedelta(seconds=int(time_seconds))
             trips = TaxiTrip.objects.filter(arrival_date=departure_date)
@@ -417,7 +417,7 @@ def create_taxi_trip(request):
             taxi_trip = TaxiTrip(origin=bus_trip.destination, destination=location, departure_date=departure_date, arrival_date=arrival_date,
                                  bus_trip=bus_trip, user=user, taxi=taxi, price=price, distance_meters=distance_meters,
                                  distance_string=distance_string, time_seconds=time_seconds, time_string=time_string)
-        elif trip == '3' and bus_trip.round_trip:
+        elif int(trip) == 3 and bus_trip.round_trip:
             arrival_date = bus_trip.departure_date - timedelta(minutes=30)
             departure_date = arrival_date - timedelta(seconds=int(time_seconds))
             trips = TaxiTrip.objects.filter(arrival_date=departure_date)
@@ -430,7 +430,7 @@ def create_taxi_trip(request):
             taxi_trip = TaxiTrip(origin=location, destination=bus_trip.destination, departure_date=departure_date, arrival_date=arrival_date,
                                  bus_trip=bus_trip, user=user, taxi=taxi, price=price, distance_meters=distance_meters,
                                  distance_string=distance_string, time_seconds=time_seconds, time_string=time_string)
-        elif trip == '4' and bus_trip.round_trip:
+        elif int(trip) == 4 and bus_trip.round_trip:
             departure_date = bus_trip.arrival_date
             arrival_date = departure_date + timedelta(seconds=int(time_seconds))
             trips = TaxiTrip.objects.filter(arrival_date=departure_date)

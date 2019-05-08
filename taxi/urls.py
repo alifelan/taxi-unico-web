@@ -13,6 +13,7 @@ urlpatterns = [
     path('busTrip/<int:id>', views.get_bus_trip, name='get_bus_trip'),
     path('randomBusTrip/', views.get_random_bus_trip, name='get_random_bus_trip'),
     path('login/', views.login, name='login'),
+    path('startTrip/', views.start_trip, name='start_trip'),
     path('rateDriver/', views.rate_driver, name='rate_driver'),
     path('rateUser/', views.rate_user, name='rate_user'),
     path('getCurrentOrNext/<str:email>', views.get_current_or_next_trip, name='get_current_or_next_trip'),

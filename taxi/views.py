@@ -276,6 +276,46 @@ def get_current_or_next_trip(request, email):
 
 
 @csrf_exempt
+def start_trip(request):
+    """
+    Start taxi trip
+    Param:
+        taxiTripId: Id of the taxi trip
+    Status:
+        400: Missing data in json
+        404: Taxi trip does not exist
+        405: Wrong method
+        412: Rating is not an integer between 1 and 5
+    Returns: TaxiTrip
+        {
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating
+        }
+    """
+    if request.method == 'POST':
+        body = json.loads(request.body.decode("utf-8"))
+        try:
+            taxi_trip_id = body['taxiTripId']
+        except KeyError:
+            return JsonResponse({'status': 'false', 'message': 'Missing data'}, status=400)
+        try:
+            taxi_trip = TaxiTrip.objects.get(id=taxi_trip_id)
+        except ObjectDoesNotExist:
+            return JsonResponse({'status': 'false', 'message': 'Taxi trip does not exist'}, status=404)
+        taxi_trip.departure_date = timezone.now()
+        taxi_trip.save()
+        serializer = TaxiTripSerializer(taxi_trip)
+        return JsonResponse(serializer.data, safe=False)
+    return JsonResponse({'status': 'false', 'message': 'Only POST'}, status=405)
+
+
+@csrf_exempt
 def rate_driver(request):
     """
     Adds rating to driver in taxi trip

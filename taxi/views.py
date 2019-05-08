@@ -6,6 +6,7 @@ from rest_framework.parsers import JSONParser
 from taxi.models import Taxi, User, Location, BusTrip, TaxiTrip, State, City
 from taxi.serializers import TaxiSerializer, UserSerializer, LocationSerializer, BusTripSerializer, TaxiTripSerializer
 from datetime import datetime, timedelta
+from django.utils import timezone
 from random import randint
 import json
 
@@ -181,7 +182,7 @@ def get_user_taxi_trips(request, email):
         404: User does not exist
         405: Wrong method
     Returns: [TaxiTrip]
-        [{
+        {past_trips: [{
             id, origin: {id, name, state, city, address, latitude, longitude},
             destination: {id, name, state, city, address, latitude, longitude},
             date, bus_trip: {id, origin: {id, name, state, city, address,
@@ -190,7 +191,25 @@ def get_user_taxi_trips(request, email):
             second_departure_date, second_arrival_date, round_trip},
             user: {name, email}, taxi: {id, driver_name, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
-        }]
+        }], future_trips: [{
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating
+        }], current_trip: [{
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating
+        }]}
     """
     if request.method == 'GET':
         try:
@@ -198,8 +217,15 @@ def get_user_taxi_trips(request, email):
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'false', 'message': 'User does not exist'}, status=404)
         user_taxi_trips = user.taxiTrips.all()
-        serializer = TaxiTripSerializer(user_taxi_trips, many=True)
-        response = {"data": serializer.data}
+        current_trip = [trip for trip in user_taxi_trips if trip.departure_date <
+                        timezone.now() and trip.arrival_date > timezone.now()]
+        past_trips = [trip for trip in user_taxi_trips if trip.arrival_date < timezone.now()]
+        future_trips = [trip for trip in user_taxi_trips if trip.departure_date > timezone.now()]
+        current_serializer = TaxiTripSerializer(current_trip, many=True)
+        past_serializer = TaxiTripSerializer(past_trips, many=True)
+        future_serializer = TaxiTripSerializer(future_trips, many=True)
+        response = {'past_trips': past_serializer.data,
+                    'future_trips': future_serializer.data, 'current_trip': current_serializer.data}
         return JsonResponse(response, safe=False)
     return JsonResponse({'status': 'false', 'message': 'Only GET'}, status=405)
 

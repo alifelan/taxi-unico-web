@@ -47,15 +47,34 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
         404: User does not exist
         405: Wrong method
     Returns: [TaxiTrip]
-        [{
+        {past_trips: [{
             id, origin: {id, name, state, city, address, latitude, longitude},
             destination: {id, name, state, city, address, latitude, longitude},
             date, bus_trip: {id, origin: {id, name, state, city, address,
             latitude, longitude}, destination: {id, name, state, city,
-            address, latitude, longitude}, departure_date, arrival_date, round_trip},
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
             user: {name, email}, taxi: {id, driver_name, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
-        }]
+        }], future_trips: [{
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating
+        }], current_trip: [{
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating
+        }]}
 
 
 

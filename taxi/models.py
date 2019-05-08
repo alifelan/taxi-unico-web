@@ -75,7 +75,7 @@ class TaxiTrip(models.Model):
     destination = models.ForeignKey(
         to=Location, related_name='taxiTripsD', on_delete=models.PROTECT)
     departure_date = models.DateTimeField()
-    arrival_date = models.DateTimeField(null=True, blank=True)
+    arrival_date = models.DateTimeField()
     bus_trip = models.ForeignKey(to=BusTrip, related_name='taxiTrips', on_delete=models.PROTECT)
     user = models.ForeignKey(to=User, related_name='taxiTrips',
                              on_delete=models.PROTECT, null=True, blank=True)

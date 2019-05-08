@@ -178,7 +178,6 @@ def get_user_taxi_trips(request, email):
     Param:
         email: user email
     Status:
-        400: Missing data in json
         404: User does not exist
         405: Wrong method
     Returns: [TaxiTrip]
@@ -226,6 +225,52 @@ def get_user_taxi_trips(request, email):
         future_serializer = TaxiTripSerializer(future_trips, many=True)
         response = {'past_trips': past_serializer.data,
                     'future_trips': future_serializer.data, 'current_trip': current_serializer.data}
+        return JsonResponse(response, safe=False)
+    return JsonResponse({'status': 'false', 'message': 'Only GET'}, status=405)
+
+
+@csrf_exempt
+def get_current_or_next_trip(request, email):
+    """
+    Returns current or next taxi trip
+    Param:
+        email: user email
+    Status:
+        404: User does not exist
+        405: Wrong method
+    Returns: [TaxiTrip]
+        {current, taxi_trip: {
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating
+        }}
+    """
+    if request.method == 'GET':
+        try:
+            user = User.objects.get(email=email)
+        except ObjectDoesNotExist:
+            return JsonResponse({'status': 'false', 'message': 'User does not exist'}, status=404)
+        user_taxi_trips = user.taxiTrips.all()
+        current_trip = [trip for trip in user_taxi_trips if trip.departure_date <
+                        timezone.now() and trip.arrival_date > timezone.now()]
+        current = True
+        if len(current_trip) == 0:
+            current = False
+            trips = [trip for trip in user.taxiTrips.order_by('departure_date') if trip.departure_date >
+                     timezone.now()]
+            if len(trips) == 0:
+                return JsonResponse({'current': current, 'taxi_trip': ''}, safe=False)
+            else:
+                taxi_trip = trips[0]
+        else:
+            taxi_trip = current_trip[0]
+        serializer = TaxiTripSerializer(taxi_trip)
+        response = {'current': current, 'taxi_trip': serializer.data}
         return JsonResponse(response, safe=False)
     return JsonResponse({'status': 'false', 'message': 'Only GET'}, status=405)
 

@@ -140,7 +140,7 @@ def taxi_details(request, id):
 
 
 @csrf_exempt
-def login(request):
+def user_login(request):
     """
     Login checks email and password received
     Param:
@@ -172,6 +172,40 @@ def login(request):
     return JsonResponse({'status': 'false', 'message': 'Only POST'}, status=405)
 
 
+@csrf_exempt
+def taxi_login(request):
+    """
+    Login checks email and password received
+    Param:
+        email: Taxi email
+        password: Taxi password
+    Status:
+        400: Missing data in json
+        404: Taxi email does not exist
+        200: Success
+        403: Wrong password
+        405: Wrong method
+    Returns:
+        {status, message}
+    """
+    if request.method == 'POST':
+        body = json.loads(request.body.decode("utf-8"))
+        try:
+            taxi_email = body['email']
+        except KeyError:
+            return JsonResponse({'status': 'false', 'message': 'Missing data'}, status=400)
+        try:
+            taxi = Taxi.objects.get(email=taxi_email)
+        except ObjectDoesNotExist:
+            return JsonResponse({'status': 'false', 'message': 'User does not exist'}, status=404)
+        taxi_password = body['password']
+        if taxi.password == taxi_password:
+            return JsonResponse({'status': 'true', 'message': 'Success on loging in'}, status=200)
+        return JsonResponse({'status': 'false', 'message': 'Wrong password'}, status=403)
+    return JsonResponse({'status': 'false', 'message': 'Only POST'}, status=405)
+
+
+@csrf_exempt
 def get_user_taxi_trips(request, email):
     """
     Returns taxi trips of a user
@@ -188,7 +222,7 @@ def get_user_taxi_trips(request, email):
             latitude, longitude}, destination: {id, name, state, city,
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
-            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }], future_trips: [{
             id, origin: {id, name, state, city, address, latitude, longitude},
@@ -197,7 +231,7 @@ def get_user_taxi_trips(request, email):
             latitude, longitude}, destination: {id, name, state, city,
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
-            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }], current_trip: [{
             id, origin: {id, name, state, city, address, latitude, longitude},
@@ -206,7 +240,16 @@ def get_user_taxi_trips(request, email):
             latitude, longitude}, destination: {id, name, state, city,
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
-            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating
+        }], cancelled_trips: [{
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }]}
     """
@@ -215,16 +258,83 @@ def get_user_taxi_trips(request, email):
             user = User.objects.get(email=email)
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'false', 'message': 'User does not exist'}, status=404)
-        user_taxi_trips = user.taxiTrips.all()
-        current_trip = [trip for trip in user_taxi_trips if trip.departure_date <
-                        timezone.now() and trip.arrival_date > timezone.now()]
-        past_trips = [trip for trip in user_taxi_trips if trip.arrival_date < timezone.now()]
-        future_trips = [trip for trip in user_taxi_trips if trip.departure_date > timezone.now()]
+        current_trip = user.taxiTrips.filter(status='AC')
+        past_trips = user.taxiTrips.filter(status='PA')
+        future_trips = user.taxiTrips.filter(status='PE')
+        cancelled_trips = user.taxiTrips.filter(status='CA')
         current_serializer = TaxiTripSerializer(current_trip, many=True)
         past_serializer = TaxiTripSerializer(past_trips, many=True)
         future_serializer = TaxiTripSerializer(future_trips, many=True)
+        cancelled_serializer = TaxiTripSerializer(cancelled_trips, many=True)
         response = {'past_trips': past_serializer.data,
-                    'future_trips': future_serializer.data, 'current_trip': current_serializer.data}
+                    'future_trips': future_serializer.data, 'current_trip': current_serializer.data, 'cancelled_trips': cancelled_serializer.data}
+        return JsonResponse(response, safe=False)
+    return JsonResponse({'status': 'false', 'message': 'Only GET'}, status=405)
+
+
+@csrf_exempt
+def get_taxi_taxi_trips(request, email):
+    """
+    Returns taxi trips of a taxi
+    Param:
+        email: taxi email
+    Status:
+        404: Taxi does not exist
+        405: Wrong method
+    Returns: [TaxiTrip]
+        {past_trips: [{
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating
+        }], future_trips: [{
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating
+        }], current_trip: [{
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating
+        }], cancelled_trips: [{
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating
+        }]}
+    """
+    if request.method == 'GET':
+        try:
+            taxi = Taxi.objects.get(email=email)
+        except ObjectDoesNotExist:
+            return JsonResponse({'status': 'false', 'message': 'User does not exist'}, status=404)
+        current_trip = taxi.trips.filter(status='AC')
+        past_trips = taxi.trips.filter(status='PA')
+        future_trips = taxi.trips.filter(status='PE')
+        cancelled_trips = taxi.trips.filter(status='CA')
+        current_serializer = TaxiTripSerializer(current_trip, many=True)
+        past_serializer = TaxiTripSerializer(past_trips, many=True)
+        future_serializer = TaxiTripSerializer(future_trips, many=True)
+        cancelled_serializer = TaxiTripSerializer(cancelled_trips, many=True)
+        response = {'past_trips': past_serializer.data,
+                    'future_trips': future_serializer.data, 'current_trip': current_serializer.data, 'cancelled_trips': cancelled_serializer.data}
         return JsonResponse(response, safe=False)
     return JsonResponse({'status': 'false', 'message': 'Only GET'}, status=405)
 
@@ -246,7 +356,7 @@ def get_current_or_next_trip(request, email):
             latitude, longitude}, destination: {id, name, state, city,
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
-            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }}
     """
@@ -255,14 +365,11 @@ def get_current_or_next_trip(request, email):
             user = User.objects.get(email=email)
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'false', 'message': 'User does not exist'}, status=404)
-        user_taxi_trips = user.taxiTrips.all()
-        current_trip = [trip for trip in user_taxi_trips if trip.departure_date <
-                        timezone.now() and trip.arrival_date > timezone.now()]
+        current_trip = user.taxiTrips.filter(status='AC')
         current = True
         if len(current_trip) == 0:
             current = False
-            trips = [trip for trip in user.taxiTrips.order_by('departure_date') if trip.departure_date >
-                     timezone.now()]
+            trips = user.taxiTrips.filter(status='PE').order_by('departure_date')
             if len(trips) == 0:
                 return JsonResponse({'current': current, 'taxi_trip': ''}, safe=False)
             else:
@@ -294,7 +401,7 @@ def start_trip(request):
             latitude, longitude}, destination: {id, name, state, city,
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
-            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }
     """
@@ -309,6 +416,7 @@ def start_trip(request):
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'false', 'message': 'Taxi trip does not exist'}, status=404)
         taxi_trip.departure_date = timezone.now()
+        taxi_trip.status = 'AC'
         taxi_trip.save()
         serializer = TaxiTripSerializer(taxi_trip)
         return JsonResponse(serializer.data, safe=False)
@@ -335,7 +443,7 @@ def rate_driver(request):
             latitude, longitude}, destination: {id, name, state, city,
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
-            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }
     """
@@ -379,7 +487,7 @@ def rate_user(request):
             latitude, longitude}, destination: {id, name, state, city,
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
-            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }
     """
@@ -399,6 +507,7 @@ def rate_user(request):
             return JsonResponse({'status': 'false', 'message': 'Taxi trip does not exist'}, status=404)
         taxi_trip.user_rating = rating
         taxi_trip.arrival_date = datetime.strptime(arrival_date, '%m/%d/%y %H:%M')
+        taxi_trip.status = 'PA'
         taxi_trip.save()
         serializer = TaxiTripSerializer(taxi_trip)
         return JsonResponse(serializer.data, safe=False)
@@ -445,7 +554,7 @@ def create_taxi_trip(request):
             latitude, longitude}, destination: {id, name, state, city,
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
-            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }
     """

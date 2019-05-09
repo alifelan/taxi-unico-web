@@ -53,7 +53,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             latitude, longitude}, destination: {id, name, state, city,
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
-            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }], future_trips: [{
             id, origin: {id, name, state, city, address, latitude, longitude},
@@ -62,7 +62,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             latitude, longitude}, destination: {id, name, state, city,
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
-            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }], current_trip: [{
             id, origin: {id, name, state, city, address, latitude, longitude},
@@ -71,7 +71,45 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             latitude, longitude}, destination: {id, name, state, city,
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
-            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating
+        }]}
+
+
+## https://taxi-unico-api.herokuapp.com/taxiTaxiTrips/<email>
+    Returns taxi trips of a taxi
+    Param:
+        email: taxi email
+    Status:
+        404: Taxi does not exist
+        405: Wrong method
+    Returns: [TaxiTrip]
+        {past_trips: [{
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating
+        }], future_trips: [{
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating
+        }], current_trip: [{
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }]}
 
@@ -114,7 +152,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             date, bus_trip: {id, origin: {id, name, state, city, address,
             latitude, longitude}, destination: {id, name, state, city,
             address, latitude, longitude}, departure_date, arrival_date, round_trip},
-            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }
 
@@ -187,7 +225,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
 
 
 
-## https://taxi-unico-api.herokuapp.com/login/
+## https://taxi-unico-api.herokuapp.com/userLogin/
     Login checks email and password received
     Param:
         email: User email
@@ -195,6 +233,21 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
     Status:
         400: Missing data in json
         404: User email does not exist
+        200: Success
+        403: Wrong password
+        405: Wrong method
+    Returns:
+        {status, message}
+
+
+## https://taxi-unico-api.herokuapp.com/taxiLogin/
+    Login checks email and password received
+    Param:
+        email: Taxi email
+        password: Taxi password
+    Status:
+        400: Missing data in json
+        404: Taxi email does not exist
         200: Success
         403: Wrong password
         405: Wrong method
@@ -248,7 +301,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             latitude, longitude}, destination: {id, name, state, city,
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
-            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }
 
@@ -271,7 +324,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             latitude, longitude}, destination: {id, name, state, city,
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
-            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }
 
@@ -291,7 +344,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             latitude, longitude}, destination: {id, name, state, city,
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
-            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }}
 
@@ -299,7 +352,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
 ## https://taxi-unico-api.herokuapp.com/startTrip/
     Start taxi trip
     Param:
-        taxiTripId: Id of the taxi trip
+        taxiTripId: Id of the taxi trip|
     Status:
         400: Missing data in json
         404: Taxi trip does not exist
@@ -313,6 +366,6 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             latitude, longitude}, destination: {id, name, state, city,
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
-            user: {name, email}, taxi: {id, driver_name, plate, model, brand,
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating
         }

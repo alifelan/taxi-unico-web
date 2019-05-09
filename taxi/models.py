@@ -43,8 +43,9 @@ class Location(models.Model):
 
 
 class Taxi(models.Model):
-    id = models.AutoField(primary_key=True)
     driver_name = models.CharField(max_length=50)
+    email = models.CharField(max_length=50, primary_key=True)
+    password = models.CharField(max_length=50)
     plate = models.CharField(max_length=15)
     model = models.CharField(max_length=50)
     brand = models.CharField(max_length=50)
@@ -87,6 +88,15 @@ class TaxiTrip(models.Model):
     distance_string = models.CharField(max_length=100)
     time_seconds = models.BigIntegerField()
     time_string = models.CharField(max_length=100)
+
+    status_options = (
+        ('CA', "CANCELLED"),
+        ('AC', "ACTIVE"),
+        ('PE', "PENDING"),
+        ('PA', "PAST"),
+    )
+
+    status = models.CharField(max_length=2, choices=status_options, default='PE')
 
     def __str__(self):
         return str(self.id)

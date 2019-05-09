@@ -9,7 +9,7 @@ class TaxiSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Taxi
-        fields = ('id', 'driver_name', 'plate', 'model', 'brand',
+        fields = ('driver_name', 'email', 'plate', 'model', 'brand',
                   'taxi_number', 'city', 'rating', 'trips')
 
     def get_rating(self, obj):
@@ -87,4 +87,4 @@ class TaxiTripSerializer(serializers.ModelSerializer):
         fields = ('id', 'origin', 'destination', 'departure_date',
                   'arrival_date', 'bus_trip', 'user', 'taxi', 'price',
                   'taxi_rating', 'user_rating', 'distance_meters',
-                  'distance_string', 'time_seconds', 'time_string')
+                  'distance_string', 'time_seconds', 'time_string', 'status')

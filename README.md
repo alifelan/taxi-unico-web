@@ -54,7 +54,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
             user: {name, email}, taxi: {driver_name, email, plate, model, brand,
-            taxi_number}, price, taxi_rating, user_rating
+            taxi_number}, price, taxi_rating, user_rating, status
         }], future_trips: [{
             id, origin: {id, name, state, city, address, latitude, longitude},
             destination: {id, name, state, city, address, latitude, longitude},
@@ -63,7 +63,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
             user: {name, email}, taxi: {driver_name, email, plate, model, brand,
-            taxi_number}, price, taxi_rating, user_rating
+            taxi_number}, price, taxi_rating, user_rating, status
         }], current_trip: [{
             id, origin: {id, name, state, city, address, latitude, longitude},
             destination: {id, name, state, city, address, latitude, longitude},
@@ -72,7 +72,16 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
             user: {name, email}, taxi: {driver_name, email, plate, model, brand,
-            taxi_number}, price, taxi_rating, user_rating
+            taxi_number}, price, taxi_rating, user_rating, status
+        }], cancelled_trips: [{
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating, status
         }]}
 
 
@@ -92,7 +101,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
             user: {name, email}, taxi: {driver_name, email, plate, model, brand,
-            taxi_number}, price, taxi_rating, user_rating
+            taxi_number}, price, taxi_rating, user_rating, status
         }], future_trips: [{
             id, origin: {id, name, state, city, address, latitude, longitude},
             destination: {id, name, state, city, address, latitude, longitude},
@@ -101,7 +110,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
             user: {name, email}, taxi: {driver_name, email, plate, model, brand,
-            taxi_number}, price, taxi_rating, user_rating
+            taxi_number}, price, taxi_rating, user_rating, status
         }], current_trip: [{
             id, origin: {id, name, state, city, address, latitude, longitude},
             destination: {id, name, state, city, address, latitude, longitude},
@@ -110,7 +119,16 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
             user: {name, email}, taxi: {driver_name, email, plate, model, brand,
-            taxi_number}, price, taxi_rating, user_rating
+            taxi_number}, price, taxi_rating, user_rating, status
+        }], cancelled_trips: [{
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating, status
         }]}
 
 
@@ -153,7 +171,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             latitude, longitude}, destination: {id, name, state, city,
             address, latitude, longitude}, departure_date, arrival_date, round_trip},
             user: {name, email}, taxi: {driver_name, email, plate, model, brand,
-            taxi_number}, price, taxi_rating, user_rating
+            taxi_number}, price, taxi_rating, user_rating, status
         }
 
 
@@ -302,7 +320,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
             user: {name, email}, taxi: {driver_name, email, plate, model, brand,
-            taxi_number}, price, taxi_rating, user_rating
+            taxi_number}, price, taxi_rating, user_rating, status
         }
 
 
@@ -325,7 +343,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
             user: {name, email}, taxi: {driver_name, email, plate, model, brand,
-            taxi_number}, price, taxi_rating, user_rating
+            taxi_number}, price, taxi_rating, user_rating, status
         }
 
 
@@ -345,7 +363,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
             user: {name, email}, taxi: {driver_name, email, plate, model, brand,
-            taxi_number}, price, taxi_rating, user_rating
+            taxi_number}, price, taxi_rating, user_rating, status
         }}
 
 
@@ -367,5 +385,5 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             address, latitude, longitude}, first_departure_date, first_arrival_date,
             second_departure_date, second_arrival_date, round_trip},
             user: {name, email}, taxi: {driver_name, email, plate, model, brand,
-            taxi_number}, price, taxi_rating, user_rating
+            taxi_number}, price, taxi_rating, user_rating, status
         }

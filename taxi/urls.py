@@ -16,6 +16,7 @@ urlpatterns = [
     path('userLogin/', views.user_login, name='user_login'),
     path('taxiLogin/', views.taxi_login, name='taxi_login'),
     path('startTrip/', views.start_trip, name='start_trip'),
+    path('cancelTrip/', views.cancel_trip, name='cancel_trip'),
     path('rateDriver/', views.rate_driver, name='rate_driver'),
     path('rateUser/', views.rate_user, name='rate_user'),
     path('getCurrentOrNext/<str:email>', views.get_current_or_next_trip, name='get_current_or_next_trip'),

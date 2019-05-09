@@ -287,10 +287,10 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
         }
 
 
-## https://taxi-unico-api.herokuapp.com/taxi/<id>
+## https://taxi-unico-api.herokuapp.com/taxi/<email>
     Returns details of a taxi
     Param:
-        id: taxi id
+        email: taxi email
     Status:
         400: Missing data in json
         404: Taxi does not exist

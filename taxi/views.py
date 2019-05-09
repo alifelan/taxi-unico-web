@@ -115,11 +115,11 @@ def user_details(request, email):
 
 
 @csrf_exempt
-def taxi_details(request, id):
+def taxi_details(request, email):
     """
     Returns details of a taxi
     Param:
-        id: taxi id
+        email: taxi email
     Status:
         400: Missing data in json
         404: Taxi does not exist
@@ -131,7 +131,7 @@ def taxi_details(request, id):
     """
     if request.method == 'GET':
         try:
-            taxi = Taxi.objects.get(id=id)
+            taxi = Taxi.objects.get(email=email)
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'false', 'message': 'Taxi does not exist'}, status=404)
         serializer = TaxiSerializer(taxi)

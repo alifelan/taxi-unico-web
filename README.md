@@ -387,3 +387,25 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             user: {name, email}, taxi: {driver_name, email, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating, status
         }
+
+
+## https://taxi-unico-api.herokuapp.com/cancelTrip/
+    Start taxi trip
+    Param:
+        taxiTripId: Id of the taxi trip
+    Status:
+        400: Missing data in json
+        404: Taxi trip does not exist
+        405: Wrong method
+        412: Rating is not an integer between 1 and 5
+    Returns: TaxiTrip
+        {
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating, status
+        }

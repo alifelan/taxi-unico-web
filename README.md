@@ -505,7 +505,6 @@ Returns: [TaxiTrip]
             address: Address
             latitude: Latitude
             longitude: Longitude
-        change: 1 to change origin, 2 to change destination
     Status:
         400: Missing data in json
         404: Taxi trip does not exist

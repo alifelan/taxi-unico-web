@@ -694,7 +694,6 @@ def update_taxi_trip_location(request):
             address: Address
             latitude: Latitude
             longitude: Longitude
-        change: 1 to change origin, 2 to change destination
     Status:
         400: Missing data in json
         404: Taxi trip does not exist
@@ -712,7 +711,7 @@ def update_taxi_trip_location(request):
             taxi_number}, price, taxi_rating, user_rating, status
         }
     """
-    if request.method == 'POST':
+    if request.method == 'PUT':
         body = json.loads(request.body.decode("utf-8"))
         try:
             taxi_trip_id = body['taxiTripId']
@@ -747,16 +746,18 @@ def update_taxi_trip_location(request):
             taxi_trip = TaxiTrip.objects.get(id=taxi_trip_id)
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'false', 'message': 'Taxi trip does not exist'}, status=404)
-        if int(change) == 1:
+        if taxi_trip.destination == taxi_trip.bus_trip.origin:
             taxi_trip.origin = location
-        elif int(change) == 2:
+        elif taxi_trip.origin == taxi_trip.bus_trip.destination:
             taxi_trip.destination = location
-        else:
-            return JsonResponse({'status': 'false', 'message': 'Change must be 1 or 2'}, status=412)
+        elif taxi_trip.destination == taxi_trip.bus_trip.destination:
+            taxi_trip.origin = location
+        elif taxi_trip.origin == taxi_trip.bus_trip.origin:
+            taxi_trip.destination = location
         taxi_trip.save()
         serializer = TaxiTripSerializer(taxi_trip)
         return JsonResponse(serializer.data, safe=False)
-    return JsonResponse({'status': 'false', 'message': 'Only POST'}, status=405)
+    return JsonResponse({'status': 'false', 'message': 'Only PUT'}, status=405)
 
 
 @csrf_exempt

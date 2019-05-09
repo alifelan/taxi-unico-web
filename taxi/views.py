@@ -378,7 +378,7 @@ def get_bus_email_trips(request, bus_trip_id, email):
 
 
 @csrf_exempt
-def get_current_or_next_trip(request, email):
+def get_user_current_or_next_trip(request, email):
     """
     Returns current or next taxi trip
     Param:
@@ -408,6 +408,49 @@ def get_current_or_next_trip(request, email):
         if len(current_trip) == 0:
             current = False
             trips = user.taxiTrips.filter(status='PE').order_by('departure_date')
+            if len(trips) == 0:
+                return JsonResponse({'current': current, 'taxi_trip': ''}, safe=False)
+            else:
+                taxi_trip = trips[0]
+        else:
+            taxi_trip = current_trip[0]
+        serializer = TaxiTripSerializer(taxi_trip)
+        response = {'current': current, 'taxi_trip': serializer.data}
+        return JsonResponse(response, safe=False)
+    return JsonResponse({'status': 'false', 'message': 'Only GET'}, status=405)
+
+
+@csrf_exempt
+def get_taxi_current_or_next_trip(request, email):
+    """
+    Returns current or next taxi trip
+    Param:
+        email: taxi email
+    Status:
+        404: Taxi does not exist
+        405: Wrong method
+    Returns: [TaxiTrip]
+        {current, taxi_trip: {
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating, status
+        }}
+    """
+    if request.method == 'GET':
+        try:
+            taxi = Taxi.objects.get(email=email)
+        except ObjectDoesNotExist:
+            return JsonResponse({'status': 'false', 'message': 'Taxi does not exist'}, status=404)
+        current_trip = taxi.trips.filter(status='AC')
+        current = True
+        if len(current_trip) == 0:
+            current = False
+            trips = taxi.trips.filter(status='PE').order_by('departure_date')
             if len(trips) == 0:
                 return JsonResponse({'current': current, 'taxi_trip': ''}, safe=False)
             else:

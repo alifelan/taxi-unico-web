@@ -438,24 +438,51 @@ Meaning of status:
 
 
 ## https://taxi-unico-api.herokuapp.com/getUserBusTrips/<int:bus_trip_id>/<str:email>
-    Returns user's trips on a bus trip
-    Param:
-        bus_trip_id: bus trip id
-        email: user email
-    Status:
-        404: User or bus trip does not exist
-        405: Wrong method
-    Returns: [TaxiTrip]
-        {trips: [
-            id, origin: {id, name, state, city, address, latitude, longitude},
-            destination: {id, name, state, city, address, latitude, longitude},
-            date, bus_trip: {id, origin: {id, name, state, city, address,
-            latitude, longitude}, destination: {id, name, state, city,
-            address, latitude, longitude}, first_departure_date, first_arrival_date,
-            second_departure_date, second_arrival_date, round_trip},
-            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
-            taxi_number}, price, taxi_rating, user_rating, status
-        ]}
+Returns user's trips on a bus trip
+Param:
+    bus_trip_id: bus trip id
+    email: user email
+Status:
+    404: User or bus trip does not exist
+    405: Wrong method
+Returns: [TaxiTrip]
+    {trip1: [
+        id, origin: {id, name, state, city, address, latitude, longitude},
+        destination: {id, name, state, city, address, latitude, longitude},
+        date, bus_trip: {id, origin: {id, name, state, city, address,
+        latitude, longitude}, destination: {id, name, state, city,
+        address, latitude, longitude}, first_departure_date, first_arrival_date,
+        second_departure_date, second_arrival_date, round_trip},
+        user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+        taxi_number}, price, taxi_rating, user_rating, status
+    ], trip2: [
+        id, origin: {id, name, state, city, address, latitude, longitude},
+        destination: {id, name, state, city, address, latitude, longitude},
+        date, bus_trip: {id, origin: {id, name, state, city, address,
+        latitude, longitude}, destination: {id, name, state, city,
+        address, latitude, longitude}, first_departure_date, first_arrival_date,
+        second_departure_date, second_arrival_date, round_trip},
+        user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+        taxi_number}, price, taxi_rating, user_rating, status
+    ], trip3: [
+        id, origin: {id, name, state, city, address, latitude, longitude},
+        destination: {id, name, state, city, address, latitude, longitude},
+        date, bus_trip: {id, origin: {id, name, state, city, address,
+        latitude, longitude}, destination: {id, name, state, city,
+        address, latitude, longitude}, first_departure_date, first_arrival_date,
+        second_departure_date, second_arrival_date, round_trip},
+        user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+        taxi_number}, price, taxi_rating, user_rating, status
+    ], trip4: [
+        id, origin: {id, name, state, city, address, latitude, longitude},
+        destination: {id, name, state, city, address, latitude, longitude},
+        date, bus_trip: {id, origin: {id, name, state, city, address,
+        latitude, longitude}, destination: {id, name, state, city,
+        address, latitude, longitude}, first_departure_date, first_arrival_date,
+        second_departure_date, second_arrival_date, round_trip},
+        user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+        taxi_number}, price, taxi_rating, user_rating, status
+    ]}
 
 
 ## https://taxi-unico-api.herokuapp.com/updateTaxiTripLocation/

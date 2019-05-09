@@ -350,7 +350,34 @@ def get_bus_email_trips(request, bus_trip_id, email):
         404: User or bus trip does not exist
         405: Wrong method
     Returns: [TaxiTrip]
-        {trips: [
+        {trip1: [
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating, status
+        ], trip2: [
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating, status
+        ], trip3: [
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating, status
+        ], trip4: [
             id, origin: {id, name, state, city, address, latitude, longitude},
             destination: {id, name, state, city, address, latitude, longitude},
             date, bus_trip: {id, origin: {id, name, state, city, address,
@@ -370,9 +397,17 @@ def get_bus_email_trips(request, bus_trip_id, email):
             bus_trip = BusTrip.objects.get(id=bus_trip_id)
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'false', 'message': 'Bus trip does not exist'}, status=404)
-        taxi_trips = bus_trip.taxiTrips.filter(user=user)
-        serializer = TaxiTripSerializer(taxi_trips, many=True)
-        response = {'trips': serializer.data}
+        taxi_trips = bus_trip.taxiTrips.filter(user=user).exclude(status='CA')
+        trip1 = taxi_trips.filter(destination=bus_trip.origin)
+        trip2 = taxi_trips.filter(origin=bus_trip.destination)
+        trip3 = taxi_trips.filter(destination=bus_trip.destination)
+        trip4 = taxi_trips.filter(origin=bus_trip.origin)
+        serializer1 = TaxiTripSerializer(trip1, many=True)
+        serializer2 = TaxiTripSerializer(trip2, many=True)
+        serializer3 = TaxiTripSerializer(trip3, many=True)
+        serializer4 = TaxiTripSerializer(trip4, many=True)
+        response = {'trip1': serializer1.data, 'trip2': serializer2.data,
+                    'trip3': serializer3.data, 'trip4': serializer4.data}
         return JsonResponse(response, safe=False)
     return JsonResponse({'status': 'false', 'message': 'Only GET'}, status=405)
 

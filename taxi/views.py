@@ -622,7 +622,7 @@ def rate_driver(request):
             rating = body['rating']
         except KeyError:
             return JsonResponse({'status': 'false', 'message': 'Missing data'}, status=400)
-        if float(rating) < 1 or float(rating) > 5:
+        if int(rating) < 1 or int(rating) > 5:
             return JsonResponse({'status': 'false', 'message': 'Rating not in range 1-5'}, status=412)
         try:
             taxi_trip = TaxiTrip.objects.get(id=taxi_trip_id)

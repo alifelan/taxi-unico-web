@@ -616,7 +616,6 @@ def rate_user(request):
         try:
             taxi_trip_id = body['taxiTripId']
             rating = body['rating']
-            arrival_date = body['arrivalDate']
         except KeyError:
             return JsonResponse({'status': 'false', 'message': 'Missing data'}, status=400)
         if int(rating) < 1 or int(rating) > 5:
@@ -626,7 +625,7 @@ def rate_user(request):
         except ObjectDoesNotExist:
             return JsonResponse({'status': 'false', 'message': 'Taxi trip does not exist'}, status=404)
         taxi_trip.user_rating = rating
-        taxi_trip.arrival_date = datetime.strptime(arrival_date, '%m/%d/%y %H:%M')
+        taxi_trip.arrival_date = timezone.now()
         taxi_trip.status = 'PA'
         taxi_trip.save()
         serializer = TaxiTripSerializer(taxi_trip)

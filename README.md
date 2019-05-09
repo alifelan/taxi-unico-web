@@ -14,7 +14,7 @@ Meaning of status:
     user works with POST and PUT,
 
     POST:
-        Receives a json with data te create a user.
+        Receives a json with data to create a user.
         Param:
             name: User name
             email: User email

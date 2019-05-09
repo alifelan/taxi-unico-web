@@ -592,6 +592,84 @@ def rate_user(request):
 
 
 @csrf_exempt
+def update_taxi_trip_location(request):
+    """
+    Updates location of taxi trip.
+    Param:
+        taxiTripId: Taxi trip id
+        location:
+            name: Name
+            state: State
+            city: City
+            address: Address
+            latitude: Latitude
+            longitude: Longitude
+        change: 1 to change origin, 2 to change destination
+    Status:
+        400: Missing data in json
+        404: Taxi trip does not exist
+        405: Wrong method
+        412: Change is not 1 or 2
+    Returns: TaxiTrip
+        {
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating, status
+        }
+    """
+    if request.method == 'POST':
+        body = json.loads(request.body.decode("utf-8"))
+        try:
+            taxi_trip_id = body['taxiTripId']
+            change = body['change']
+            location_json = body['location']
+            location_name = location_json['name']
+            location_state = location_json['state']
+            location_city = location_json['city']
+            location_address = location_json['address']
+            location_latitude = location_json['latitude']
+            location_longitude = location_json['longitude']
+            try:
+                state = State.objects.get(state=location_state)
+            except ObjectDoesNotExist:
+                state = State(state=location_state)
+                state.save()
+            try:
+                city = City.objects.get(state=state, city=location_city)
+            except ObjectDoesNotExist:
+                city = City(state=state, city=location_city)
+                city.save()
+            try:
+                location = Location.objects.get(
+                    city=city, name=location_name, address=location_address,)
+            except ObjectDoesNotExist:
+                location = Location(city=city, address=location_address, name=location_name,
+                                    latitude=location_latitude, longitude=location_longitude)
+                location.save()
+        except KeyError:
+            return JsonResponse({'status': 'false', 'message': 'Missing data'}, status=400)
+        try:
+            taxi_trip = TaxiTrip.objects.get(id=taxi_trip_id)
+        except ObjectDoesNotExist:
+            return JsonResponse({'status': 'false', 'message': 'Taxi trip does not exist'}, status=404)
+        if int(change) == 1:
+            taxi_trip.origin = location
+        elif int(change) == 2:
+            taxi_trip.destination = location
+        else:
+            return JsonResponse({'status': 'false', 'message': 'Change must be 1 or 2'}, status=412)
+        taxi_trip.save()
+        serializer = TaxiTripSerializer(taxi_trip)
+        return JsonResponse(serializer.data, safe=False)
+    return JsonResponse({'status': 'false', 'message': 'Only POST'}, status=405)
+
+
+@csrf_exempt
 def create_taxi_trip(request):
     """
     Creates a taxi trip with data received. It receives a number to identify

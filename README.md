@@ -430,3 +430,33 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
             user: {name, email}, taxi: {driver_name, email, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating, status
         ]}
+
+
+## https://taxi-unico-api.herokuapp.com/updateTaxiTripLocation/
+    Updates location of taxi trip.
+    Param:
+        taxiTripId: Taxi trip id
+        location:
+            name: Name
+            state: State
+            city: City
+            address: Address
+            latitude: Latitude
+            longitude: Longitude
+        change: 1 to change origin, 2 to change destination
+    Status:
+        400: Missing data in json
+        404: Taxi trip does not exist
+        405: Wrong method
+        412: Change is not 1 or 2
+    Returns: TaxiTrip
+        {
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating, status
+        }

@@ -22,4 +22,5 @@ urlpatterns = [
     path('getCurrentOrNext/<str:email>', views.get_current_or_next_trip, name='get_current_or_next_trip'),
     path('getUserBusTrips/<int:bus_trip_id>/<str:email>',
          views.get_bus_email_trips, name='get_bus_email_trips'),
+    path('updateTaxiTripLocation/', views.update_taxi_trip_location, name='update_taxi_trip_location'),
 ]

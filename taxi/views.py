@@ -126,7 +126,7 @@ def taxi_details(request, email):
         405: Wrong method
     Returns: Taxi
         {
-            id, driver_name, plate, model, brand, taxi_number, city, rating, trips
+            email, driver_name, plate, model, brand, taxi_number, city, rating, trips
         }
     """
     if request.method == 'GET':

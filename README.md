@@ -4,6 +4,12 @@
 
 Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplicaciones móviles"
 
+Meaning of status:
+-CA: CANCELLED
+-PE: PENDING
+-AC: ACTIVE
+-PA: PAST
+
 ## https://taxi-unico-api.herokuapp.com/user/
     user works with POST and PUT,
 
@@ -297,7 +303,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
         405: Wrong method
     Returns: Taxi
         {
-            id, driver_name, plate, model, brand, taxi_number, city, rating, trips
+            email, driver_name, plate, model, brand, taxi_number, city, rating, trips
         }
 
 

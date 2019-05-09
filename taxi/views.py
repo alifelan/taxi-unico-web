@@ -340,6 +340,44 @@ def get_taxi_taxi_trips(request, email):
 
 
 @csrf_exempt
+def get_bus_email_trips(request, bus_trip_id, email):
+    """
+    Returns user's trips on a bus trip
+    Param:
+        bus_trip_id: bus trip id
+        email: user email
+    Status:
+        404: User or bus trip does not exist
+        405: Wrong method
+    Returns: [TaxiTrip]
+        {trips: [
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating, status
+        ]}
+    """
+    if request.method == 'GET':
+        try:
+            user = User.objects.get(email=email)
+        except ObjectDoesNotExist:
+            return JsonResponse({'status': 'false', 'message': 'User does not exist'}, status=404)
+        try:
+            bus_trip = BusTrip.objects.get(id=bus_trip_id)
+        except ObjectDoesNotExist:
+            return JsonResponse({'status': 'false', 'message': 'Bus trip does not exist'}, status=404)
+        taxi_trips = bus_trip.taxiTrips.filter(user=user)
+        serializer = TaxiTripSerializer(taxi_trips, many=True)
+        response = {'trips': serializer.data}
+        return JsonResponse(response, safe=False)
+    return JsonResponse({'status': 'false', 'message': 'Only GET'}, status=405)
+
+
+@csrf_exempt
 def get_current_or_next_trip(request, email):
     """
     Returns current or next taxi trip

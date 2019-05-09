@@ -769,7 +769,8 @@ def create_taxi_trip(request):
         if int(trip) == 1:
             arrival_date = bus_trip.first_departure_date - timedelta(minutes=30)
             departure_date = arrival_date - timedelta(seconds=int(time_seconds))
-            trips = TaxiTrip.objects.filter(arrival_date=departure_date)
+            trips = TaxiTrip.objects.filter(arrival_date__gte=departure_date).filter(
+                departure_date__lte=arrival_date)
             busy_local_taxis = {trip.taxi for trip in trips if trip.taxi.city == origin.city}
             free_taxis = set(Taxi.objects.all()) - busy_local_taxis
             if len(free_taxis) > 0:
@@ -782,7 +783,8 @@ def create_taxi_trip(request):
         elif int(trip) == 2:
             departure_date = bus_trip.first_arrival_date
             arrival_date = departure_date + timedelta(seconds=int(time_seconds))
-            trips = TaxiTrip.objects.filter(arrival_date=departure_date)
+            trips = TaxiTrip.objects.filter(arrival_date__gte=departure_date).filter(
+                departure_date__lte=arrival_date)
             busy_local_taxis = {trip.taxi for trip in trips if trip.taxi.city == origin.city}
             free_taxis = set(Taxi.objects.all()) - busy_local_taxis
             if len(free_taxis) > 0:
@@ -795,7 +797,8 @@ def create_taxi_trip(request):
         elif int(trip) == 3 and bus_trip.round_trip:
             arrival_date = bus_trip.second_departure_date - timedelta(minutes=30)
             departure_date = arrival_date - timedelta(seconds=int(time_seconds))
-            trips = TaxiTrip.objects.filter(arrival_date=departure_date)
+            trips = TaxiTrip.objects.filter(arrival_date__gte=departure_date).filter(
+                departure_date__lte=arrival_date)
             busy_local_taxis = {trip.taxi for trip in trips if trip.taxi.city == origin.city}
             free_taxis = set(Taxi.objects.all()) - busy_local_taxis
             if len(free_taxis) > 0:
@@ -808,7 +811,8 @@ def create_taxi_trip(request):
         elif int(trip) == 4 and bus_trip.round_trip:
             departure_date = bus_trip.second_arrival_date
             arrival_date = departure_date + timedelta(seconds=int(time_seconds))
-            trips = TaxiTrip.objects.filter(arrival_date=departure_date)
+            trips = TaxiTrip.objects.filter(arrival_date__gte=departure_date).filter(
+                departure_date__lte=arrival_date)
             busy_local_taxis = {trip.taxi for trip in trips if trip.taxi.city == origin.city}
             free_taxis = set(Taxi.objects.all()) - busy_local_taxis
             if len(free_taxis) > 0:

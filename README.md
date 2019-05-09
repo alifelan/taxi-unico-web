@@ -370,7 +370,16 @@ Meaning of status:
             second_departure_date, second_arrival_date, round_trip},
             user: {name, email}, taxi: {driver_name, email, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating, status
-        }}
+        }, rate: {
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating, status
+        }
 
 
 ## https://taxi-unico-api.herokuapp.com/getTaxiCurrentOrNext/<email>

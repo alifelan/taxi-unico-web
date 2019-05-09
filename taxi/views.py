@@ -431,7 +431,16 @@ def get_user_current_or_next_trip(request, email):
             second_departure_date, second_arrival_date, round_trip},
             user: {name, email}, taxi: {driver_name, email, plate, model, brand,
             taxi_number}, price, taxi_rating, user_rating, status
-        }}
+        }, rate: {
+            id, origin: {id, name, state, city, address, latitude, longitude},
+            destination: {id, name, state, city, address, latitude, longitude},
+            date, bus_trip: {id, origin: {id, name, state, city, address,
+            latitude, longitude}, destination: {id, name, state, city,
+            address, latitude, longitude}, first_departure_date, first_arrival_date,
+            second_departure_date, second_arrival_date, round_trip},
+            user: {name, email}, taxi: {driver_name, email, plate, model, brand,
+            taxi_number}, price, taxi_rating, user_rating, status
+        }
     """
     if request.method == 'GET':
         try:
@@ -449,8 +458,12 @@ def get_user_current_or_next_trip(request, email):
                 taxi_trip = trips[0]
         else:
             taxi_trip = current_trip[0]
+        rate_trips = user.taxiTrips.filter(status='PA').filter(taxi_rating=None)
+        if len(rate_trips > 0):
+            rate_trips = rate_trips[0]
         serializer = TaxiTripSerializer(taxi_trip)
-        response = {'current': current, 'taxi_trip': serializer.data}
+        rate_serializer = TaxiTripSerializer(rate_trips, many=True)
+        response = {'current': current, 'taxi_trip': serializer.data, 'rate': rate_serializer.data}
         return JsonResponse(response, safe=False)
     return JsonResponse({'status': 'false', 'message': 'Only GET'}, status=405)
 

@@ -19,7 +19,7 @@ urlpatterns = [
     path('cancelTrip/', views.cancel_trip, name='cancel_trip'),
     path('rateDriver/', views.rate_driver, name='rate_driver'),
     path('rateUser/', views.rate_user, name='rate_user'),
-    path('getUserCurrentOrNext/<str:email>', views.get_user_current_or_next_trip,
+    path('getCurrentOrNext/<str:email>', views.get_user_current_or_next_trip,
          name='get_user_current_or_next_trip'),
     path('getTaxiCurrentOrNext/<str:email>', views.get_taxi_current_or_next_trip,
          name='get_taxi_current_or_next_trip'),

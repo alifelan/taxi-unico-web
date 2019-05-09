@@ -347,7 +347,7 @@ Backend web del proyecto semestral de la clase "Proyecto de desarrollo de aplica
         }
 
 
-## https://taxi-unico-api.herokuapp.com/getUserCurrentOrNext/<email>
+## https://taxi-unico-api.herokuapp.com/getCurrentOrNext/<email>
     Returns current or next taxi trip
     Param:
         email: user email

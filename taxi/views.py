@@ -459,7 +459,7 @@ def get_user_current_or_next_trip(request, email):
         else:
             taxi_trip = current_trip[0]
         rate_trips = user.taxiTrips.filter(status='PA').filter(taxi_rating=None)
-        if len(rate_trips > 0):
+        if len(rate_trips) > 0:
             rate_trips = rate_trips[0]
         serializer = TaxiTripSerializer(taxi_trip)
         rate_serializer = TaxiTripSerializer(rate_trips, many=True)

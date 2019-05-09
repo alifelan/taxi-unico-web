@@ -82,3 +82,5 @@ TaxiTrip(origin=bus_mva, destination=casa, departure_date=once, arrival_date=doc
          price=85.50, distance_meters=1026, distance_string="1026 metros", time_seconds=1026, time_string="1026 segundos", status='CA').save()
 TaxiTrip(origin=bus_mva, destination=casa, departure_date=once, arrival_date=doce, bus_trip=mva_mty_round, user=ali, taxi=luis, price=70.50,
          taxi_rating=5, user_rating=5, distance_meters=1026, distance_string="1026 metros", time_seconds=1026, time_string="1026 segundos", status='PE').save()
+TaxiTrip(origin=tec, destination=bus_mty, departure_date=nueve, arrival_date=diez, bus_trip=mva_mty_round, user=ali, taxi=neto, price=700.50,
+         taxi_rating=5, user_rating=5, distance_meters=1026, distance_string="1026 metros", time_seconds=1026, time_string="1026 segundos", status='PE').save()

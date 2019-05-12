@@ -7,7 +7,7 @@ from taxi.models import Taxi, User, Location, BusTrip, TaxiTrip, State, City
 from taxi.serializers import TaxiSerializer, UserSerializer, LocationSerializer, BusTripSerializer, TaxiTripSerializer
 from datetime import datetime, timedelta
 from django.utils import timezone
-from random import randint
+import random
 import json
 
 # Create your views here.
@@ -1066,8 +1066,7 @@ def get_random_bus_trip(request):
     if request.method == 'GET':
         if len(BusTrip.objects.all()) == 0:
             return JsonResponse({'status': 'false', 'message': 'There are no bus trips'}, status=404)
-        bus_trip_id = randint(1, len(BusTrip.objects.all()))
-        bus_trip = BusTrip.objects.get(id=bus_trip_id)
+        bus_trip = random.choice(list(BusTrip.objects.all()))
         serializer = BusTripSerializer(bus_trip)
         return JsonResponse(serializer.data, safe=False)
     return JsonResponse({'status': 'false', 'message': 'Only GET'}, status=405)

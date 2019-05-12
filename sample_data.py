@@ -50,19 +50,19 @@ museo.save()
 
 
 ulises = Taxi(driver_name="Ulises", email="ulises@gmail.com", password="123",
-              plate="ABC1234", model="No se", brand="Tmpc se", taxi_number=1, city=mty)
+              plate="ABC1234", model="Model 3", brand="Tesla", taxi_number=1, city=mty)
 ulises.save()
 neto = Taxi(driver_name="Ernesto", email="neto@gmail.com", password="123",
-            plate="ABC1234", model="No se", brand="Tmpc se", taxi_number=2, city=mty)
+            plate="ABC1235", model="Model 3", brand="Tesla", taxi_number=2, city=mty)
 neto.save()
 osko = Taxi(driver_name="Oscar", email="oscar@gmail.com", password="123",
-            plate="ABC1234", model="No se", brand="Tmpc se", taxi_number=3, city=mty)
+            plate="ABC1236", model="Model 3", brand="Tesla", taxi_number=3, city=mty)
 osko.save()
 juan = Taxi(driver_name="Juan", email="juan@gmail.com", password="123",
-            plate="ABC1234", model="No se", brand="Tmpc se", taxi_number=4, city=mva)
+            plate="ABC1237", model="Model 3", brand="Tesla", taxi_number=4, city=mva)
 juan.save()
 luis = Taxi(driver_name="Luis", email="luis@gmail.com", password="123",
-            plate="ABC1234", model="No se", brand="Tmpc se", taxi_number=5, city=mva)
+            plate="ABC1238", model="Model 3", brand="Tesla", taxi_number=5, city=mva)
 luis.save()
 
 

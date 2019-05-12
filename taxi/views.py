@@ -503,6 +503,8 @@ def get_taxi_current_or_next_trip(request, email):
                 return JsonResponse({'current': current, 'taxi_trip': ''}, safe=False)
             else:
                 taxi_trip = trips[0]
+                if taxi_trip.departure_date + timedelta(minutes=5) > timezone.now():
+                    current = True
         else:
             taxi_trip = current_trip[0]
         serializer = TaxiTripSerializer(taxi_trip)

@@ -509,7 +509,6 @@ Returns: [TaxiTrip]
         400: Missing data in json
         404: Taxi trip does not exist
         405: Wrong method
-        412: Change is not 1 or 2
     Returns: TaxiTrip
         {
             id, origin: {id, name, state, city, address, latitude, longitude},

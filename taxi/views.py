@@ -700,7 +700,6 @@ def update_taxi_trip_location(request):
         400: Missing data in json
         404: Taxi trip does not exist
         405: Wrong method
-        412: Change is not 1 or 2
     Returns: TaxiTrip
         {
             id, origin: {id, name, state, city, address, latitude, longitude},
@@ -717,7 +716,6 @@ def update_taxi_trip_location(request):
         body = json.loads(request.body.decode("utf-8"))
         try:
             taxi_trip_id = body['taxiTripId']
-            change = body['change']
             location_json = body['location']
             location_name = location_json['name']
             location_state = location_json['state']

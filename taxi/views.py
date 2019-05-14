@@ -456,6 +456,8 @@ def get_user_current_or_next_trip(request, email):
                 return JsonResponse({'current': current, 'taxi_trip': ''}, safe=False)
             else:
                 taxi_trip = trips[0]
+                if taxi_trip.departure_date <= datetime.now() - timedelta(hours=17):
+                    current = True
         else:
             taxi_trip = current_trip[0]
         rate_trips = user.taxiTrips.filter(status='PA').filter(taxi_rating=None)
